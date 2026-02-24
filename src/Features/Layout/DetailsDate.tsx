@@ -15,14 +15,14 @@ export default function DetailsDate() {
             <p className="text-sm font-semibold">Mês atual</p>
           </section>
         </section>
-        <section>
-          <Button>
+        <section className="flex items-center gap-2">
+          <Button className="bg-white text-black border hover:bg-zinc-300">
             <IoChevronBack />
           </Button>
-          <Button>
+          <Button className="bg-white text-black border hover:bg-zinc-300">
             <IoChevronForward />
           </Button>
-          <span className="ml-3 text-lg font-semibold">23/02</span>
+          <span className="text-lg font-semibold">23/02</span>
         </section>
       </div>
     </div>

@@ -1,11 +1,10 @@
 import {
   Card,
-  CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { FaWallet } from "react-icons/fa";
+import { LuWallet } from "react-icons/lu";
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 
 
@@ -17,8 +16,8 @@ export default function SummaryCard() {
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
             <div className="flex items-center gap-4">
               {/* Ícone */}
-              <div className="p-3 text-green-700 bg-green-200 rounded-lg text-white text-2xl">
-                <FaWallet size={18} />
+              <div className="p-3 text-green-700 bg-green-200 rounded-lg text-2xl">
+                <LuWallet size={18} />
               </div>
               {/* Textos */}
               <div>
@@ -38,7 +37,7 @@ export default function SummaryCard() {
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
             <div className="flex items-center gap-4">
               {/* Ícone */}
-              <div className="p-3 text-red-700 bg-red-200 rounded-lg text-white text-2xl">
+              <div className="p-3 text-red-700 bg-red-200 rounded-lg text-2xl">
                 <FaArrowTrendDown size={18} />
               </div>
               {/* Textos */}
@@ -59,7 +58,7 @@ export default function SummaryCard() {
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
             <div className="flex items-center gap-4">
               {/* Ícone */}
-              <div className="p-3 text-green-700 bg-green-200 rounded-lg text-white text-2xl">
+              <div className="p-3 text-green-700 bg-green-200 rounded-lg text-2xl">
                 <FaArrowTrendUp size={18} />
               </div>
               {/* Textos */}
