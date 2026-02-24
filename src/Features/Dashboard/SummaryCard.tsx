@@ -1,0 +1,81 @@
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
+import { FaWallet } from "react-icons/fa";
+import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
+
+
+export default function SummaryCard() {
+  return (
+    <div className="mx-44 pt-6">
+      <div className="grid grid-cols-3 gap-6">
+        <Card className="rounded-xl shadow-sm">
+          <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+            <div className="flex items-center gap-4">
+              {/* Ícone */}
+              <div className="p-3 text-green-700 bg-green-200 rounded-lg text-white text-2xl">
+                <FaWallet size={18} />
+              </div>
+              {/* Textos */}
+              <div>
+                <CardTitle className="text-xl text-zinc-400 font-sans">
+                  Renda Total
+                </CardTitle>
+                <h1 className="text-2xl font-bold font-sans">R$ 00,00</h1>
+                <CardDescription className="text-lg text-zinc-400 font-sans">
+                  Soma de todas as fontes
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+        <Card className="rounded-xl shadow-sm">
+          <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+            <div className="flex items-center gap-4">
+              {/* Ícone */}
+              <div className="p-3 text-red-700 bg-red-200 rounded-lg text-white text-2xl">
+                <FaArrowTrendDown size={18} />
+              </div>
+              {/* Textos */}
+              <div>
+                <CardTitle className="text-xl text-zinc-400 font-sans">
+                  Total de Despesas
+                </CardTitle>
+                <h1 className="text-2xl font-bold font-sans">R$ 00,00</h1>
+                <CardDescription className="text-lg text-zinc-400 font-sans">
+                  0.0% da renda
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+        <Card className="rounded-xl shadow-sm">
+          <CardHeader className="flex flex-row items-start gap-4 space-y-0">
+            <div className="flex items-center gap-4">
+              {/* Ícone */}
+              <div className="p-3 text-green-700 bg-green-200 rounded-lg text-white text-2xl">
+                <FaArrowTrendUp size={18} />
+              </div>
+              {/* Textos */}
+              <div>
+                <CardTitle className="text-xl text-zinc-400 font-sans">
+                  Saldo Restante
+                </CardTitle>
+                <h1 className="text-2xl font-bold font-sans">R$: 00,00</h1>
+                <CardDescription className="text-lg text-zinc-400 font-sans">
+                  Disponivel para uso
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+      </div>
+    </div>
+  );
+}

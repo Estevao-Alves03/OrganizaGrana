@@ -1,7 +1,13 @@
+import SummaryCard from "./Features/Dashboard/SummaryCard";
+import DetailsDate from "./Features/Layout/DetailsDate";
+import Navbar from "./Features/Layout/Navbar";
+
 export default function App() {
   return (
-    <div className="bg-red-500 text-white p-10">
-      TESTE
+    <div>
+      <Navbar />
+      <DetailsDate/>
+      <SummaryCard />
     </div>
-  )
+  );
 }
