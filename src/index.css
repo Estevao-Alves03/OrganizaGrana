@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Remove spinners do Chrome, Edge, Safari */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Remove spinners do Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

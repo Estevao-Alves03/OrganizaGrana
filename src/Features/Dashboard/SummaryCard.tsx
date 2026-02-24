@@ -12,7 +12,7 @@ export default function SummaryCard() {
   return (
     <div className="mx-44 pt-6">
       <div className="grid grid-cols-3 gap-6">
-        <Card className="rounded-xl shadow-sm">
+        <Card className="rounded-xl shadow-xl">
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
             <div className="flex items-center gap-4">
               {/* Ícone */}
@@ -33,7 +33,7 @@ export default function SummaryCard() {
           </CardHeader>
         </Card>
 
-        <Card className="rounded-xl shadow-sm">
+        <Card className="rounded-xl shadow-xl">
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
             <div className="flex items-center gap-4">
               {/* Ícone */}
@@ -54,7 +54,7 @@ export default function SummaryCard() {
           </CardHeader>
         </Card>
 
-        <Card className="rounded-xl shadow-sm">
+        <Card className="rounded-xl shadow-xl">
           <CardHeader className="flex flex-row items-start gap-4 space-y-0">
             <div className="flex items-center gap-4">
               {/* Ícone */}
