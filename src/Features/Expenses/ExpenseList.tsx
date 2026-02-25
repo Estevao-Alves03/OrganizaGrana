@@ -9,8 +9,22 @@ import {
 } from "../../components/ui/card";
 import { IoAddOutline } from "react-icons/io5";
 import { GoTag } from "react-icons/go";
+import { useState } from "react";
+import AddExpenses from "./AddExpenses";
 
 export default function ExpenseList() {
+ 
+  const [showCard, setShowCard] = useState(false)
+
+  const isOpenCard = () => {
+    setShowCard(true)
+  }
+
+  const onCloseCard = () => {
+    setShowCard(false)
+  }
+
+
   return (
     <div className="mt-6">
       <Card className="px-3 pb-6 shadow-xl">
@@ -26,7 +40,9 @@ export default function ExpenseList() {
               {/* x depesas - Os valores podem mudar todo mes */}
             </section>
             <section>
-              <Button className="px-4 py-6 text-lg bg-green-700 hover:bg-green-800">
+              <Button 
+              onClick={isOpenCard}
+              className="px-4 py-6 text-lg bg-green-700 hover:bg-green-800">
                 <IoAddOutline />
                 Nova despesa
               </Button>
@@ -46,6 +62,7 @@ export default function ExpenseList() {
             </p>
           </div>
         </CardContent>
+      {showCard && <AddExpenses onCloseCard={onCloseCard}/>}
       </Card>
     </div>
   );
