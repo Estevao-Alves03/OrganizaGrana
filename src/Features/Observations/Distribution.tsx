@@ -5,7 +5,7 @@ import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 
 export default function Distribution() {
   return (
-    <div className="space-y-6 px-4 max-w-2xl mx-auto">
+    <div className="space-y-6 max-w-2xl mx-auto">
       <div className="flex flex-col gap-3">
         <section className="flex items-start gap-2">
           <span className="flex-shrink-0 mt-1 border rounded-lg bg-green-200 p-0.5">

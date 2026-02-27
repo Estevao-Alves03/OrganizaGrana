@@ -1,6 +1,7 @@
 import SummaryCard from "./Features/Dashboard/SummaryCard";
 import ExpenseList from "./Features/Expenses/ExpenseList";
 import ExpenseSection from "./Features/Expenses/ExpenseSection";
+import GraphicsExpenses from "./Features/Expenses/GraphicsExpenses";
 import DetailsDate from "./Features/Layout/DetailsDate";
 import Navbar from "./Features/Layout/Navbar";
 import General from "./Features/Observations/General";
@@ -16,6 +17,7 @@ export default function App() {
         <div className="col-span-2">
           <ExpenseSection />
           <ExpenseList/>
+          <GraphicsExpenses/>
         </div>
         <div className="col-span-1">
           <Tips/>

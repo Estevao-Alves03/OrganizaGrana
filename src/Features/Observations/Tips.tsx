@@ -10,6 +10,7 @@ import { FaRegLightbulb } from "react-icons/fa";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
 import Distribution from "./Distribution";
+import Alert from "./Alert";
 
 export default function Tips() {
   return (
@@ -44,6 +45,8 @@ export default function Tips() {
               despesas do mes.
             </p>
           </div>
+          {/* <Distribution/> */}
+          {/* <Alert/> */}
         </CardContent>
       </Card>
     </div>
