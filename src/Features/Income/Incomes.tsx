@@ -1,4 +1,6 @@
-// Card principal (parte externa do card "suas rendas") - vinculado ao expense form
+// CARD EXTERNO PRINCIPAL QUE FALA SOBRE AS RENDAS. O FORMULÁRIO E A LISTAGEM DAS RENDAS 
+// ESTÃO EM OUTROS DOIS ARQUIVOS
+
 
 import {
   Card,
@@ -8,9 +10,9 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { PiCurrencyDollar } from "react-icons/pi";
-import ExpenseForm from "./ExpenseForm";
+import IncomeForm from "./IncomeForm";
 
-export default function ExpenseSection() {
+export default function Incomes() {
   return (
     <div className="">
       <Card className="shadow-xl">
@@ -21,7 +23,7 @@ export default function ExpenseSection() {
             </div>
             <div>
               <CardTitle className="text-xl font-bold">Suas Rendas</CardTitle>
-              <CardDescription className="text-lg text-zinc-500 font-sans">
+              <CardDescription className="text-lg text-zinc-500 font-sans font-medium">
                 Adicione suas fontes de renda do mês
               </CardDescription>
               {/* Total: R$ 00,00 de x fonte */}
@@ -29,7 +31,7 @@ export default function ExpenseSection() {
           </div>
         </CardHeader>
         <CardContent>
-          <ExpenseForm/>
+          <IncomeForm/>
         </CardContent>
       </Card>
     </div>

@@ -12,7 +12,7 @@ export default function DetailsDate() {
           </div>
           <section>
             <h1 className="text-2xl font-bold">Fevereiro de 2026</h1>
-            <p className="text-sm font-semibold">Mês atual</p>
+            <p className="text-base font-medium text-gray-500">Mês atual</p>
           </section>
         </section>
         <section className="flex items-center gap-2">

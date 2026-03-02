@@ -8,8 +8,8 @@ export default function Navbar() {
           <FaWallet className="text-3xl" />
         </div>
         <section>
-          <h1 className="text-2xl font-bold">MeuBolso</h1>
-          <p className="text-sm font-semibold">Controle Financeiro Pessoal</p>
+          <h1 className="text-3xl font-bold">MeuBolso</h1>
+          <p className="text-base text-gray-700 font-medium">Controle Financeiro Pessoal</p>
         </section>
       </div>
     </header>

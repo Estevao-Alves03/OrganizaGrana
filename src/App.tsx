@@ -1,11 +1,10 @@
 import SummaryCard from "./Features/Dashboard/SummaryCard";
-import ExpenseList from "./Features/Expenses/ExpenseList";
-import ExpenseSection from "./Features/Expenses/ExpenseSection";
-import GraphicsExpenses from "./Features/Expenses/GraphicsExpenses";
+import Expenses from "./Features/Expenses/Expenses";
+import Incomes from "./Features/Income/Incomes";
 import DetailsDate from "./Features/Layout/DetailsDate";
 import Navbar from "./Features/Layout/Navbar";
-import General from "./Features/Observations/General";
-import Tips from "./Features/Observations/Tips";
+import Notes from "./Features/Observations/Notes";
+import MoneyCard from "./Features/Observations/MoneyCard";
 
 export default function App() {
   return (
@@ -15,13 +14,12 @@ export default function App() {
       <SummaryCard />
       <div className="grid grid-cols-3 gap-6 mx-44 mt-6">
         <div className="col-span-2">
-          <ExpenseSection />
-          <ExpenseList/>
-          <GraphicsExpenses/>
+          <Incomes />
+          <Expenses/>
         </div>
         <div className="col-span-1">
-          <Tips/>
-          <General/>
+          <MoneyCard/>
+          <Notes/>
         </div>
       </div>
     </div>

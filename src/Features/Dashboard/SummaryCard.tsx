@@ -21,11 +21,11 @@ export default function SummaryCard() {
               </div>
               {/* Textos */}
               <div>
-                <CardTitle className="text-xl text-zinc-400 font-sans">
+                <CardTitle className="text-xl text-zinc-500 font-sans font-medium">
                   Renda Total
                 </CardTitle>
                 <h1 className="text-2xl font-bold font-sans">R$ 00,00</h1>
-                <CardDescription className="text-lg text-zinc-400 font-sans">
+                <CardDescription className="text-lg text-zinc-500 font-sans font-medium">
                   Soma de todas as fontes
                 </CardDescription>
               </div>
@@ -42,11 +42,11 @@ export default function SummaryCard() {
               </div>
               {/* Textos */}
               <div>
-                <CardTitle className="text-xl text-zinc-400 font-sans">
+                <CardTitle className="text-xl text-zinc-500 font-sans font-medium">
                   Total de Despesas
                 </CardTitle>
                 <h1 className="text-2xl font-bold font-sans">R$ 00,00</h1>
-                <CardDescription className="text-lg text-zinc-400 font-sans">
+                <CardDescription className="text-lg text-zinc-500 font-sans font-medium">
                   0.0% da renda
                 </CardDescription>
               </div>
@@ -63,11 +63,11 @@ export default function SummaryCard() {
               </div>
               {/* Textos */}
               <div>
-                <CardTitle className="text-xl text-zinc-400 font-sans">
+                <CardTitle className="text-xl text-zinc-500 font-sans font-medium">
                   Saldo Restante
                 </CardTitle>
                 <h1 className="text-2xl font-bold font-sans">R$: 00,00</h1>
-                <CardDescription className="text-lg text-zinc-400 font-sans">
+                <CardDescription className="text-lg text-zinc-500 font-sans font-medium">
                   Disponivel para uso
                 </CardDescription>
               </div>

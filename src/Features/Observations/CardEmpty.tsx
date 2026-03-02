@@ -7,12 +7,9 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import { FaRegLightbulb } from "react-icons/fa";
-import { FaArrowTrendUp } from "react-icons/fa6";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
-import Distribution from "./Distribution";
-import Alert from "./Alert";
 
-export default function Tips() {
+export default function CardEmpty() {
   return (
     <div>
       <Card className="shadow-xl">
@@ -23,14 +20,11 @@ export default function Tips() {
             </div>
 
             <section>
-              <CardTitle className="text-lg font-sans font-bold">
+              <CardTitle className="text-xl font-sans font-bold">
                 Dicas para o seu dinheiro
-                {/* Atencao com suas Financas    */}
               </CardTitle>
-              <CardDescription className="text-md font-sans text-gray-500">
+              <CardDescription className="text-md font-sans font-medium text-gray-500">
                 Preencha suas rendas e despesas
-                {/* Você tem R$ 00,00 para distribuir */}
-                {/* Voce precisa ajustar seu orcamento */}
               </CardDescription>
             </section>
           </div>
@@ -40,13 +34,11 @@ export default function Tips() {
             <span className="flex-shrink-0 mt-1 border rounded-lg bg-green-200 p-0.5">
               <IoMdCheckmarkCircleOutline className="text-green-700" />
             </span>
-            <p>
+            <p className="mt-1 text-base text-gray-500 font-medium">
               Comece adicionando suas fontes de renda e depois cadastre as
               despesas do mes.
             </p>
           </div>
-          {/* <Distribution/> */}
-          {/* <Alert/> */}
         </CardContent>
       </Card>
     </div>
