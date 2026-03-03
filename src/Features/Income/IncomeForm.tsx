@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -8,36 +7,37 @@ import {
 } from "../../components/ui/card";
 import { IoAddOutline } from "react-icons/io5";
 import IncomeList from "./IncomeList";
-import type { Incomes } from "../../Types/Incomes";
-import { IncomesMock } from "../../Mocks/IncomesExamples";
+import { useFinanceStore } from "../../Store/FinanceStore";
 
 export default function IncomeForm() {
-  // estado local do formulário
-  const [incomes, setIncomes] = useState<Incomes[]>(IncomesMock);
+  const addTransaction = useFinanceStore((state) => state.addTransaction);
 
   function handleAddIncome(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     const formData = new FormData(e.currentTarget);
+
     const nameIncome = formData.get("nameIncome") as string;
-    const priceIncome = Number(formData.get("price") as string);
+    const rawValue = formData.get("price") as string;
+    const priceIncome = Number(rawValue.replace(",", "."));
 
-    if (!nameIncome || !priceIncome) return; // validação simples
+    if (!nameIncome || !priceIncome) return;
 
-    const newIncome: Incomes = {
-      id: incomes.length + 1, // mock ID
-      nameIncome,
-      priceIncome,
-    };
+    addTransaction({
+      id: crypto.randomUUID(),
+      name: nameIncome,
+      amount: priceIncome,
+      type: "income",
+      category: "Renda",
+    });
 
-    setIncomes([...incomes, newIncome]); // atualiza o estado
-    e.currentTarget.reset(); // limpa formulário
+    e.currentTarget.reset();
   }
 
   return (
     <div>
       {/* Listagem das rendas */}
-      <IncomeList incomes={incomes} />
+      <IncomeList />
 
       {/* Card do formulário */}
       <Card className="border border-dashed border-zinc-300 mt-6">
@@ -47,7 +47,10 @@ export default function IncomeForm() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <form className="flex items-center gap-4 w-full" onSubmit={handleAddIncome}>
+          <form
+            className="flex items-center gap-4 w-full"
+            onSubmit={handleAddIncome}
+          >
             <section className="flex-1">
               <input
                 type="text"
@@ -65,8 +68,9 @@ export default function IncomeForm() {
               </span>
 
               <input
-                type="number"
+                type="text"
                 name="price"
+                inputMode="decimal"
                 placeholder="00,00"
                 className="appearance-none border border-zinc-300 rounded-lg 
                   pl-12 pr-4 py-2 w-full
@@ -75,8 +79,11 @@ export default function IncomeForm() {
               />
             </section>
 
-            <Button type="submit" className="bg-green-700 hover:bg-green-800 shrink-0">
-              <IoAddOutline/>
+            <Button
+              type="submit"
+              className="bg-green-700 hover:bg-green-800 shrink-0"
+            >
+              <IoAddOutline />
             </Button>
           </form>
         </CardContent>

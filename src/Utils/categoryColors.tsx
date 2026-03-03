@@ -9,4 +9,5 @@ export const categoryColors: Record<Category, string> = {
   Lazer: "#A78BFA",
   Serviços: "#EC4899",
   Outros: "#06B6D4",
+  Renda: "#07eb35",
 };

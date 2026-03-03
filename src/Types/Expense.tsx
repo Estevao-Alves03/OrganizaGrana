@@ -7,6 +7,7 @@ export type Category =
 | "Lazer"
 | "Serviços"
 | "Outros"
+| "Renda"
 
 export type Expense = {
     id: string;

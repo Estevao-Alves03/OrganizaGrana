@@ -8,8 +8,23 @@ import {
 } from "../../components/ui/card";
 import { FaArrowTrendUp, FaRegLightbulb } from "react-icons/fa6";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { useFinanceStore } from "../../Store/FinanceStore";
 
 export default function CardPositive() {
+
+  const getTotals = useFinanceStore(state => state.getTotals)
+  const getDistribuition = useFinanceStore(state => state.getDistribuition)
+
+  const { balance } = getTotals()
+  const {emergency, education, invest, costs, leisure} = getDistribuition()
+
+    const formatCurrency = (valeu: number) => 
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(valeu)
+
+
   return (
     <div>
       <Card className="shadow-xl">
@@ -24,7 +39,7 @@ export default function CardPositive() {
                 Dicas para o seu dinheiro
               </CardTitle>
               <CardDescription className="text-md font-sans font-medium text-gray-500">
-                Você tem <span><strong>R$ 0,00</strong></span> para distribuir
+                Você tem <span><strong>{formatCurrency(balance)}</strong></span> para distribuir
               </CardDescription>
             </section>
           </div>
@@ -69,7 +84,7 @@ export default function CardPositive() {
                   Reserva de Emergencia
                 </h3>
                 <div className="flex gap-3">
-                  <span className="font-semibold">R$ 93,60</span>
+                  <span className="font-semibold">{formatCurrency(emergency)}</span>
                   <span className="text-gray-500 border border-gray-300 rounded-lg px-1">
                     30,0%
                   </span>
@@ -91,7 +106,7 @@ export default function CardPositive() {
               <div className="flex justify-between items-center">
                 <h3 className="font-medium text-gray-800">Investimentos</h3>
                 <div className="flex gap-3">
-                  <span className="font-semibold">R$ 62,40</span>
+                  <span className="font-semibold">{formatCurrency(invest)}</span>
                   <span className="text-gray-500 border border-gray-300 rounded-lg px-1">
                     20,0%
                   </span>
@@ -113,7 +128,7 @@ export default function CardPositive() {
               <div className="flex justify-between items-center">
                 <h3 className="font-medium text-gray-800">Lazer e Bem-estar</h3>
                 <div className="flex gap-3">
-                  <span className="font-semibold">R$ 62,40</span>
+                  <span className="font-semibold">{formatCurrency(leisure)}</span>
                   <span className="text-gray-500 border border-gray-300 rounded-lg px-1">
                     20,0%
                   </span>
@@ -137,7 +152,7 @@ export default function CardPositive() {
                   Educacao e Desenvolvimento
                 </h3>
                 <div className="flex gap-3">
-                  <span className="font-semibold">R$ 46,80</span>
+                  <span className="font-semibold">{formatCurrency(education)}</span>
                   <span className="text-gray-500 border border-gray-300 rounded-lg px-1">
                     15,0%
                   </span>
@@ -159,7 +174,7 @@ export default function CardPositive() {
               <div className="flex justify-between items-center">
                 <h3 className="font-medium text-gray-800">Gastos Pessoais</h3>
                 <div className="flex gap-3">
-                  <span className="font-semibold">R$ 46,80</span>
+                  <span className="font-semibold">{formatCurrency(costs)}</span>
                   <span className="text-gray-500 border border-gray-300 rounded-lg px-1">
                     15,0%
                   </span>

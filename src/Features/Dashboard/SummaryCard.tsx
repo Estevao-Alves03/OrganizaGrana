@@ -6,9 +6,23 @@ import {
 } from "../../components/ui/card";
 import { LuWallet } from "react-icons/lu";
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
-
+import { useFinanceStore } from "../../Store/FinanceStore";
 
 export default function SummaryCard() {
+  useFinanceStore((state) => state.transactions);
+
+  const { totalIncome, totalExpense, balance } = useFinanceStore
+    .getState()
+    .getTotals();
+
+  const expensePercentage = useFinanceStore.getState().getExpensePercentage();
+
+  const formatCurrency = (value: number) =>
+    new Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(value);
+
   return (
     <div className="mx-44 pt-6">
       <div className="grid grid-cols-3 gap-6">
@@ -24,7 +38,9 @@ export default function SummaryCard() {
                 <CardTitle className="text-xl text-zinc-500 font-sans font-medium">
                   Renda Total
                 </CardTitle>
-                <h1 className="text-2xl font-bold font-sans">R$ 00,00</h1>
+                <h1 className="text-2xl font-bold font-sans">
+                  {formatCurrency(totalIncome)}
+                </h1>
                 <CardDescription className="text-lg text-zinc-500 font-sans font-medium">
                   Soma de todas as fontes
                 </CardDescription>
@@ -45,9 +61,11 @@ export default function SummaryCard() {
                 <CardTitle className="text-xl text-zinc-500 font-sans font-medium">
                   Total de Despesas
                 </CardTitle>
-                <h1 className="text-2xl font-bold font-sans">R$ 00,00</h1>
+                <h1 className="text-2xl font-bold font-sans">
+                  {formatCurrency(totalExpense)}
+                </h1>
                 <CardDescription className="text-lg text-zinc-500 font-sans font-medium">
-                  0.0% da renda
+                  {expensePercentage.toFixed(2)}% da renda
                 </CardDescription>
               </div>
             </div>
@@ -66,7 +84,9 @@ export default function SummaryCard() {
                 <CardTitle className="text-xl text-zinc-500 font-sans font-medium">
                   Saldo Restante
                 </CardTitle>
-                <h1 className="text-2xl font-bold font-sans">R$: 00,00</h1>
+                <h1 className="text-2xl font-bold font-sans">
+                  {formatCurrency(balance)}
+                </h1>
                 <CardDescription className="text-lg text-zinc-500 font-sans font-medium">
                   Disponivel para uso
                 </CardDescription>

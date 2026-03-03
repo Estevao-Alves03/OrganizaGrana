@@ -1,18 +1,22 @@
 import CardEmpty from "./CardEmpty"
 import CardPositive from "./CardPositive"
 import CardNegative from "./CardNegative"
+import { useFinanceStore } from "@/Store/FinanceStore"
 
-interface MoneyCardProps {
-    remaining?: number;
-}
+export default function MoneyCard() {
 
-export default function MoneyCard( {remaining} : MoneyCardProps) {
+    useFinanceStore((state) => state.transactions);
+
+    const { balance } = useFinanceStore
+    .getState()
+    .getTotals();
+
     // card neutro
-    if(remaining === undefined || remaining === 0) {
+    if(balance === undefined || balance === 0) {
         return <CardEmpty/>
     }
 
-    if(remaining > 0){
+    if(balance > 0){
         return (
             <CardPositive/>
         )
