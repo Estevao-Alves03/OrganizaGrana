@@ -17,18 +17,20 @@ import {
 } from "../../components/ui/select";
 import { IoCloseOutline } from "react-icons/io5";
 import { useEffect, useState } from "react";
-import type { Expense, Category } from "../../Types/Expense";
+import type { Category } from "../../Types/Category";
+import { useFinanceStore } from "../../Store/FinanceStore";
+import type { Transaction } from "../../Store/FinanceStore";
+import { Checkbox } from "../../components/ui/checkbox";
 
 interface AddExpensesProps {
   onCloseCard: () => void;
-  addExpenses: (newExpense: Expense) => void;
 }
 
-export default function AddExpenses({
-  onCloseCard,
-  addExpenses,
-}: AddExpensesProps) {
+export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
+  const addTransaction = useFinanceStore((state) => state.addTransaction);
   const [category, setCategory] = useState<Category>("Moradia");
+  const [isFixed, setIsFixed] = useState(false);
+  const currentMonth = new Date().toISOString().slice(0, 7);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -42,22 +44,26 @@ export default function AddExpenses({
 
     const formData = new FormData(e.currentTarget);
 
-    const newExpense: Expense = {
+    const transaction: Transaction = {
       id: crypto.randomUUID(),
-      nameExpense: formData.get("nameExpense") as string,
-      priceExpense: Number((formData.get("price") as string).replace(",", ".")),
+      name: formData.get("nameExpense") as string,
+      amount: Number((formData.get("price") as string)?.replace(",", ".") || 0),
+      type: "expense",
       category,
-      observation: formData.get("observation") as string,
+      notes: (formData.get("observation") as string) || "",
+      fixed: isFixed, // checkbox
+      month: currentMonth,
     };
 
-    addExpenses(newExpense);
+    addTransaction(transaction);
+
     onCloseCard();
   }
 
   return (
     <div className="flex items-center justify-center fixed inset-0 backdrop-blur-sm bg-black/90 z-50">
       {" "}
-      <Card className="w-[540px] border-4 border-green-600">
+      <Card className="w-[540px] border border-green-600">
         <CardHeader className="mx-1">
           <div className="flex items-center justify-between">
             <CardTitle className="text-2xl font-bold font-sans">
@@ -76,13 +82,15 @@ export default function AddExpenses({
           <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
             {/* Nome */}
             <div className="flex flex-col gap-2">
-              <label className="font-bold font-sans text-lg">Nome da despesa</label>
+              <label className="font-bold font-sans text-lg">
+                Nome da despesa
+              </label>
               <input
                 type="text"
                 name="nameExpense"
                 required
                 placeholder="Ex: Aluguel, Internet..."
-                className="border px-3 py-2 rounded-xl placeholder:text-base focus:outline-none focus:ring-2 focus:ring-green-500 font-semibold"
+                className="border px-3 py-2 rounded-xl placeholder:text-base focus:outline-none focus:ring-2 focus:ring-green-600 font-semibold"
               />
             </div>
 
@@ -90,22 +98,25 @@ export default function AddExpenses({
             <div className="flex flex-col gap-2">
               <label className="font-bold font-sans text-lg">
                 Valor deste mês (R$)
+               <span className="text-sm text-gray-500 ml-1 font-medium">
+                  (Pode ser alterado depois)
+                </span>
               </label>
 
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-600 font-bold">
                   R$
                 </span>
 
                 <input
-                  type="number"
+                  type="text"
                   name="price"
-                  required
+                  inputMode="decimal"
                   placeholder="00,00"
                   className="appearance-none border border-zinc-300 rounded-lg 
-                  pl-10 pr-4 py-2 w-full
+                  pl-9 pr-4 py-2 w-full
                   placeholder:text-gray-400 text-lg font-semibold
-                  focus:outline-none focus:ring-2 focus:ring-green-400 placeholder:text-base"
+                  focus:outline-none focus:ring-2 focus:ring-green-600 placeholder:text-base"
                 />
               </div>
             </div>
@@ -126,14 +137,54 @@ export default function AddExpenses({
 
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="Moradia" className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm">Moradia</SelectItem>
-                    <SelectItem value="Transporte" className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm">Transporte</SelectItem>
-                    <SelectItem value="Alimentação" className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm">Alimentação</SelectItem>
-                    <SelectItem value="Saúde" className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm">Saúde</SelectItem>
-                    <SelectItem value="Educação" className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm">Educação</SelectItem>
-                    <SelectItem value="Lazer" className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm">Lazer</SelectItem>
-                    <SelectItem value="Serviços" className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm">Serviços</SelectItem>
-                    <SelectItem value="Outros" className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm">Outros</SelectItem>
+                    <SelectItem
+                      value="Moradia"
+                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                    >
+                      Moradia
+                    </SelectItem>
+                    <SelectItem
+                      value="Transporte"
+                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                    >
+                      Transporte
+                    </SelectItem>
+                    <SelectItem
+                      value="Alimentação"
+                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                    >
+                      Alimentação
+                    </SelectItem>
+                    <SelectItem
+                      value="Saúde"
+                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                    >
+                      Saúde
+                    </SelectItem>
+                    <SelectItem
+                      value="Educação"
+                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                    >
+                      Educação
+                    </SelectItem>
+                    <SelectItem
+                      value="Lazer"
+                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                    >
+                      Lazer
+                    </SelectItem>
+                    <SelectItem
+                      value="Serviços"
+                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                    >
+                      Serviços
+                    </SelectItem>
+                    <SelectItem
+                      value="Outros"
+                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                    >
+                      Outros
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -143,7 +194,9 @@ export default function AddExpenses({
             <div className="flex flex-col gap-2">
               <label className="font-bold font-sans text-base">
                 Observação
-                <span className="text-sm text-gray-500 ml-1 font-medium">(opcional)</span>
+                <span className="text-sm text-gray-500 ml-1 font-medium">
+                  (opcional)
+                </span>
               </label>
 
               <Textarea
@@ -152,7 +205,21 @@ export default function AddExpenses({
                 className="rounded-xl border border-gray-200 
              placeholder:font-sans placeholder:text-base 
              !min-h-[120px] !text-base placeholder:font-medium font-semibold
-             focus:!ring-2 focus:!ring-green-500 focus:!outline-none"
+             focus:!ring-2 focus:!ring-green-600 focus:!outline-none"
+              />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <h1 className="font-bold font-sans text-base">
+                É uma despesa fixa?
+              </h1>
+              <Checkbox
+                checked={isFixed}
+                onCheckedChange={(checked) => setIsFixed(Boolean(checked))}
+                className="h-[20px] w-[20px] border-gray-400
+            data-[state=checked]:bg-green-600
+            data-[state=checked]:border-green-600
+            data-[state=checked]:text-white"
               />
             </div>
 
@@ -161,14 +228,14 @@ export default function AddExpenses({
               <Button
                 type="button"
                 onClick={onCloseCard}
-                className="bg-white text-black hover:bg-gray-100 border px-6 py-4 font-semibold text-base"
+                className="bg-white text-black hover:bg-gray-100 border px-7 py-5 font-bold text-base"
               >
                 Cancelar
               </Button>
 
               <Button
                 type="submit"
-                className="bg-green-700 hover:bg-green-800 text-white px-6 py-4 font-semibold text-base"
+                className="bg-green-600 hover:bg-green-700 text-white px-7 py-5 font-bold text-base"
               >
                 Adicionar
               </Button>

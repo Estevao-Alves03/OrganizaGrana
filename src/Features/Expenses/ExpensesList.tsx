@@ -1,66 +1,131 @@
-// ARQUIVO QUE FAZ O MAPEAMENTO DAS DESPESAS ADICIONADAS
 import { Card } from "../../components/ui/card";
 import { FaTrash } from "react-icons/fa6";
 import { IoDocumentTextOutline } from "react-icons/io5";
-// import { ExpensesMock } from "../../Mocks/ExpensesExamples";
+import { PiPushPinDuotone } from "react-icons/pi"; // Ícone de taxinha
 import { categoryColors } from "../../Utils/categoryColors";
-import type { Expense } from "../../Types/Expense";
+import { useFinanceStore } from "../../Store/FinanceStore";
+import type { Transaction } from "../../Store/FinanceStore";
+import { useState } from "react";
 
 interface ExpensesListProps {
-  expenses: Expense[];
+  expenses: Transaction[];
 }
 
 export default function ExpensesList({ expenses }: ExpensesListProps) {
+  const removeTransaction = useFinanceStore((state) => state.removeTransaction);
+  const updateTransactionAmount = useFinanceStore(
+    (state) => state.updateTransactionAmount,
+  );
+
+  const [editingAmount, setEditingAmount] = useState<string | null>(null);
+  const [tempAmount, setTempAmount] = useState("");
+
+  const sortedExpenses = [...expenses].sort((a, b) => {
+    if (a.fixed && !b.fixed) return -1;
+    if (!a.fixed && b.fixed) return 1;
+    return 0;
+  });
+
   return (
     <div className="w-full grid grid-rows gap-3">
-      {expenses.map((expense) => (
+      {sortedExpenses.map((expense) => (
         <Card
           key={expense.id}
-          className="bg-zinc-50 hover:bg-zinc-100 shadow-md w-full"
+          className="bg-zinc-50 hover:bg-zinc-100 shadow-md w-full relative"
         >
-          <div className="flex items-center justify-between p-4">
-            <section className="flex items-center gap-3">
-              {/* CÍRCULO */}
-              <span
-                className="h-3 w-3 rounded-full self-center"
-                style={{
-                  backgroundColor: categoryColors[expense.category],
-                }}
-              />
-
-              {/* BLOCO DE TEXTO */}
-              <div className="flex items-start flex-col">
-                <h2 className="font-bold text-lg">
-                  {expense.nameExpense}
-                  <span className="text-sm ml-1.5 border bg-gray-200 px-2 py-1 rounded-full text-gray-700">
-                    {expense.category}
-                  </span>
-                </h2>
-
-                {expense.observation && (
-                  <p className="text-sm text-gray-500 mt-1 max-w-[900px] flex items-center gap-2 cursor-help">
-                    <IoDocumentTextOutline size={16} className="shrink-0" />
-                    <span title={expense.observation} className="truncate">
-                      {expense.observation}
-                    </span>
-                  </p>
-                )}
+          {/* Ícone de fixar - aparece apenas se for despesa fixa */}
+          {expense.fixed && (
+            <div className="absolute -top-2 -right-2 z-10">
+              <div className="bg-green-600 rounded-full p-1.5 shadow-md">
+                <PiPushPinDuotone className="text-white rotate-20" size={16} />
               </div>
-            </section>
+            </div>
+          )}
 
-            <section className="flex items-center gap-4">
-              <span className="font-bold text-lg hover:text-green-600 cursor-pointer transition-all duration-300">
-                R${" "}
-                {expense.priceExpense.toLocaleString("pt-BT", {
-                  maximumFractionDigits: 2,
-                  minimumFractionDigits: 2,
-                })}
-              </span>
+          {/* Grid com 3 colunas: círculo, texto, valor+botão */}
+          <div className="grid grid-cols-[auto,1fr,auto] items-center gap-3 p-4 w-full">
+            {/* COLUNA 1: Círculo */}
+            <span
+              className="h-3 w-3 rounded-full flex-shrink-0"
+              style={{
+                backgroundColor: categoryColors[expense.category],
+              }}
+            />
 
-              <button className="group p-2 hover:bg-red-400 rounded-lg border">
+            {/* COLUNA 2: Texto (título + categoria + nota) */}
+            <div className="flex flex-col min-w-0">
+              <div className="flex items-center flex-wrap gap-1.5">
+                <h2 className="font-bold text-lg truncate max-w-[200px]">
+                  {expense.name}
+                </h2>
+                <span className="text-sm font-medium font-sans border bg-gray-200 px-3 py-1 rounded-full text-gray-600 whitespace-nowrap flex-shrink-0">
+                  {expense.category}
+                </span>
+              </div>
+
+              {expense.notes && (
+                <p className="text-sm text-gray-500 mt-0.5 flex items-center gap-2 cursor-help w-full overflow-hidden">
+                  <IoDocumentTextOutline size={16} className="flex-shrink-0" />
+                  <span title={expense.notes} className="truncate block">
+                    {expense.notes}
+                  </span>
+                </p>
+              )}
+            </div>
+
+            {/* COLUNA 3: Valor + botão */}
+            <div className="flex items-center gap-4 flex-shrink-0 justify-self-end">
+              {editingAmount === expense.id ? (
+                <div className="flex items-center border-2 border-green-500 rounded-lg px-3 py-2 w-fit bg-green-50">
+                  <span className="text-base font-bold text-gray-600 mr-1">R$</span>
+
+                  <input
+                    type="number"
+                    value={tempAmount}
+                    autoFocus
+                    onChange={(e) => setTempAmount(e.target.value)}
+                    onBlur={() => {
+                      updateTransactionAmount(
+                        expense.id,
+                        Number(tempAmount) || 0,
+                      );
+                      setEditingAmount(null);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        updateTransactionAmount(
+                          expense.id,
+                          Number(tempAmount) || 0,
+                        );
+                        setEditingAmount(null);
+                      }
+                    }}
+                    className="bg-transparent outline-none w-24 text-base font-bold"
+                  />
+                </div>
+              ) : (
+                <span
+                  onClick={() => {
+                    setEditingAmount(expense.id);
+                    setTempAmount(String(expense.amount ?? ""));
+                  }}
+                  className="font-bold text-lg hover:text-green-600 cursor-pointer transition-all duration-300 whitespace-nowrap"
+                >
+                  R${" "}
+                  {(expense.amount ?? 0).toLocaleString("pt-BR", {
+                    maximumFractionDigits: 2,
+                    minimumFractionDigits: 2,
+                  })}
+                </span>
+              )}
+
+              <button
+                onClick={() => removeTransaction(expense.id)}
+                className="group p-2 hover:bg-red-400 rounded-lg border flex-shrink-0"
+              >
                 <FaTrash className="opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 text-white" />
               </button>
-            </section>
+            </div>
           </div>
         </Card>
       ))}

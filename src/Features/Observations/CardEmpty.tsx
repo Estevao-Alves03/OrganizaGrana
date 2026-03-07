@@ -15,7 +15,7 @@ export default function CardEmpty() {
       <Card className="shadow-xl">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="text-2xl border px-1.5 py-1.5 rounded-lg text-green-700 bg-green-100">
+            <div className="text-2xl border px-1.5 py-1.5 rounded-lg text-green-800 bg-green-200 border-green-400">
               <FaRegLightbulb />
             </div>
 
@@ -31,8 +31,8 @@ export default function CardEmpty() {
         </CardHeader>
         <CardContent>
           <div className="flex items-start gap-2">
-            <span className="flex-shrink-0 mt-1 border rounded-lg bg-green-200 p-0.5">
-              <IoMdCheckmarkCircleOutline className="text-green-700" />
+            <span className="flex-shrink-0 mt-1 border rounded-lg bg-green-200 border-green-400 p-1">
+              <IoMdCheckmarkCircleOutline className="text-green-800" />
             </span>
             <p className="mt-1 text-base text-gray-500 font-medium">
               Comece adicionando suas fontes de renda e depois cadastre as

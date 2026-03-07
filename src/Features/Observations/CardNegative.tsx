@@ -14,7 +14,7 @@ export default function CardNegative() {
       <Card className="shadow-xl border border-red-400">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="text-2xl border px-1.5 py-1.5 rounded-lg text-red-700 bg-red-100">
+            <div className="text-2xl border px-1.5 py-1.5 rounded-lg text-red-800 bg-red-200 border-red-400">
               <RiAlertLine />
             </div>
 
@@ -31,8 +31,8 @@ export default function CardNegative() {
         <CardContent>
           <div className="flex flex-col gap-3">
             <section className="flex items-start gap-2">
-              <span className="flex-shrink-0 mt-1 border rounded-lg bg-red-200 p-0.5">
-                <RiAlertLine className="text-red-600" />
+              <span className="flex-shrink-0 mt-1 border rounded-lg bg-red-200 border-red-400 p-1">
+                <RiAlertLine className="text-red-700" />
               </span>
               <p className="text-base font-medium text-gray-500">
                 Suas despesas ultrapassam sua renda. Revise urgentemente seus
@@ -40,8 +40,8 @@ export default function CardNegative() {
               </p>
             </section>
             <section className="flex items-start gap-2">
-              <span className="flex-shrink-0 mt-1 border rounded-lg bg-red-200 p-0.5">
-                <RiAlertLine className="text-red-600" />
+              <span className="flex-shrink-0 mt-1 border rounded-lg bg-red-200 border-red-400 p-1">
+                <RiAlertLine className="text-red-700" />
               </span>
               <p className="text-base font-medium text-gray-500">
                 Considere buscar uma renda extra ou renegociar dividas para

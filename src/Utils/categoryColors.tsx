@@ -1,4 +1,4 @@
-import type { Category } from "../Types/Expense";
+import type { Category } from "../Types/Category";
 
 export const categoryColors: Record<Category, string> = {
   Moradia: "#334155",

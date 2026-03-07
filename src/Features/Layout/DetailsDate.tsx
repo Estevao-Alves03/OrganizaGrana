@@ -16,13 +16,13 @@ export default function DetailsDate() {
           </section>
         </section>
         <section className="flex items-center gap-2">
-          <Button className="bg-white text-black border hover:bg-zinc-300">
+          <Button className="bg-white text-black border hover:bg-green-600 hover:text-white">
             <IoChevronBack />
           </Button>
-          <Button className="bg-white text-black border hover:bg-zinc-300">
+          <Button className="bg-white text-black border hover:bg-green-600 hover:text-white">
             <IoChevronForward />
           </Button>
-          <span className="text-lg font-semibold border px-2 py-1 bg-green-700 rounded-lg text-white">23/02</span>
+          <span className="text-lg font-semibold border px-2 py-1 bg-green-600 rounded-lg text-white">23/02</span>
         </section>
       </div>
     </div>

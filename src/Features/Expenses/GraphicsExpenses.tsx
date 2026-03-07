@@ -19,33 +19,40 @@ import {
   type ChartConfig,
 } from "../../components/ui/chart";
 import { Pie, PieChart, Cell, BarChart, Bar, XAxis, YAxis } from "recharts";
-// import { ExpensesMock } from "../../Mocks/ExpensesExamples";
 import { categoryColors } from "../../Utils/categoryColors";
-import type { Expense } from "../../Types/Expense";
+import { useFinanceStore } from "../../Store/FinanceStore";
 
-interface GraphicsExpensesProps {
-  expenses: Expense[];
-}
 
-export default function GraphicsExpenses({ expenses }: GraphicsExpensesProps) {
+export default function GraphicsExpenses() {
+
+const transactions = useFinanceStore((state) => state.transactions)
+const getTotals = useFinanceStore((state) => state.getTotals)
+
+const totals = getTotals()
+const totalExpense = totals.totalExpense
+
+const expenses = transactions.filter(t => t.type === "expense")
+
   const chartData = Object.values(
-    expenses.reduce(
-      (acc, expense) => {
-        if (!acc[expense.category]) {
-          acc[expense.category] = {
-            category: expense.category,
-            value: 0,
-            fill: categoryColors[expense.category] ?? "#999",
-          };
-        }
+  expenses.reduce(
+    (acc, expense) => {
+      if (!acc[expense.category]) {
+        acc[expense.category] = {
+          category: expense.category,
+          value: 0,
+          fill: categoryColors[expense.category],
+        };
+      }
 
-        acc[expense.category].value += expense.priceExpense;
+      acc[expense.category].value += expense.amount;
 
-        return acc;
-      },
-      {} as Record<string, { category: string; value: number; fill: string }>,
-    ),
-  );
+      return acc;
+    },
+    {} as Record<string, { category: string; value: number; fill: string }>
+  )
+);
+
+console.log(transactions)
 
   const chartConfig = {
     value: {
@@ -61,7 +68,7 @@ export default function GraphicsExpenses({ expenses }: GraphicsExpensesProps) {
             Visão geral dos gastos
           </CardTitle>
           <CardDescription className="text-base font-sans font-medium text-gray-500">
-            Total: R$ 0,00 em X depesas
+            Total: R$ {totalExpense.toLocaleString("pt-BR")} em {expenses.length} despesas
           </CardDescription>
         </CardHeader>
         <CardContent>
