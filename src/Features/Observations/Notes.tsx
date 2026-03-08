@@ -75,18 +75,18 @@ export default function Notes() {
   return (
     <div className="mt-6 space-y-6">
       {/* CARD 1 - Criar nota */}
-      <Card className="shadow-xl">
+      <Card className="shadow-xl bg-slate-900 border-slate-600">
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div className="text-2xl border border-amber-400 px-1.5 py-1.5 rounded-lg text-amber-600 bg-amber-100">
+            <div className="text-2xl px-1.5 py-1.5 rounded-lg bg-amber-950 text-amber-600 border border-amber-600">
               <RiFilePaper2Line />
             </div>
 
             <section>
-              <CardTitle className="text-xl font-sans font-bold">
+              <CardTitle className="text-xl font-sans font-bold text-white">
                 Observações Gerais
               </CardTitle>
-              <CardDescription  className="text-md font-sans font-medium text-gray-500">Anote lembretes sobre este mês</CardDescription>
+              <CardDescription  className="text-md font-sans font-medium text-gray-300">Anote lembretes sobre este mês</CardDescription>
             </section>
           </div>
         </CardHeader>
@@ -96,13 +96,13 @@ export default function Notes() {
             value={newNote}
             onChange={(e) => setNewNote(e.target.value)}
             placeholder="Ex: Lembrar de pagar o cartão até dia 15..."
-            className="rounded-xl border border-gray-200 !min-h-[120px] placeholder:text-lg !text-lg !font-medium focus:!ring-2 focus:!ring-green-600 focus:!outline-none"
+            className="rounded-xl border border-gray-500 !min-h-[120px] text-white placeholder:text-gray-300 placeholder:text-lg !text-lg !font-medium focus:!ring-2 focus:!ring-green-600 focus:!outline-none"
           />
 
           <section className="text-right">
             <Button
               onClick={handleSaveNote}
-              className="w-[150px] mt-2 bg-green-600 hover:bg-green-700 font-bold px-5 py-3 text-base"
+              className="w-[150px] mt-2 bg-green-800 hover:bg-green-900 border border-green-600 font-bold px-5 py-3 text-base"
             >
               Salvar
             </Button>
@@ -112,11 +112,11 @@ export default function Notes() {
 
       {/* CARD 2 - Lista de notas (só aparece se houver notas) */}
       {sortedNotes.length > 0 && (
-        <Card className="shadow-xl overflow-hidden">
+        <Card className="shadow-xl overflow-hidden bg-slate-900 border-slate-600 ">
           <CardContent className="p-6 space-y-6">
             {/* NOTAS FIXADAS */}
             {pinnedNotes.length > 0 && (
-              <div className="space-y-3">
+              <div className="space-y-3 ">
                 <p className="text-sm font-semibold text-gray-500 flex items-center gap-2">
                   <span>📌</span> Fixadas
                 </p>
@@ -139,7 +139,7 @@ export default function Notes() {
 
             {/* NOTAS NORMAIS */}
             {normalNotes.length > 0 && (
-              <div className="space-y-3">
+              <div className="space-y-3 ">
                 {pinnedNotes.length > 0 && (
                   <p className="text-sm font-semibold text-gray-500 flex items-center gap-2 pt-2 border-t">
                     <span>📄</span> Outras
@@ -170,7 +170,7 @@ export default function Notes() {
                     <PaginationItem>
                       <PaginationPrevious
                         onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                        className={page === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={page === 1 ? "pointer-events-none text-white font-bold" : "cursor-pointer text-white hover:bg-white/10"}
                       />
                     </PaginationItem>
 
@@ -186,7 +186,7 @@ export default function Notes() {
                             className={
                               isActive
                                 ? "bg-green-600 text-white hover:bg-green-700 border-green-600"
-                                : "hover:bg-green-100 hover:text-green-700 cursor-pointer"
+                                : "hover:bg-green-100 hover:text-green-700 cursor-pointer text-white"
                             }
                           >
                             {pageNumber}
@@ -198,7 +198,7 @@ export default function Notes() {
                     <PaginationItem>
                       <PaginationNext
                         onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                        className={page === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        className={page === totalPages ? "pointer-events-none text-white font-bold" : "cursor-pointer text-white hover:bg-white/10"}
                       />
                     </PaginationItem>
                   </PaginationContent>

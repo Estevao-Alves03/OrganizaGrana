@@ -35,24 +35,24 @@ export default function Expenses() {
 
   return (
     <div className="mt-6">
-      <Card className="px-3 pb-6 shadow-xl">
+      <Card className="px-3 pb-6 bg-slate-900 border-slate-600 ">
         <CardHeader>
           <div className="flex items-center justify-between">
             <section>
-              <CardTitle className="text-xl font-bold">
+              <CardTitle className="text-xl font-bold text-white">
                 Despesas do mês
               </CardTitle>
 
-              <CardDescription className="text-lg font-sans text-zinc-500 font-medium">
+              <CardDescription className="text-lg font-sans text-zinc-300 font-medium">
                 {expenses.length} despesas cadastradas
               </CardDescription>
             </section>
 
             <Button
               onClick={openCard}
-              className="px-4 py-6 text-lg bg-green-600 hover:bg-green-700"
+              className="px-4 py-6 text-lg bg-green-800 hover:bg-green-900 text-white border border-emerald-600"
             >
-              <IoAddOutline />
+              <IoAddOutline className="!h-[30px] !w-[20px]"/>
               Nova despesa
             </Button>
           </div>
@@ -63,16 +63,16 @@ export default function Expenses() {
             <ExpensesList expenses={expenses} />
           ) : (
             <div>
-              <span className="bg-zinc-200 rounded-xl p-5 mb-4 inline-block">
-                <GoTag className="text-4xl text-gray-600" />
+              <span className="bg-slate-900 border border-slate-300 rounded-xl p-7 mb-6 inline-block">
+                <GoTag className="text-4xl text-slate-300" />
               </span>
 
               <div className="space-y-1">
-                <h1 className="font-bold text-gray-800 text-lg mb-3">
+                <h1 className="font-bold text-slate-300 text-lg mb-3">
                   Sem despesas neste mês
                 </h1>
 
-                <p className="text-md text-gray-500 max-w-[320px] font-medium">
+                <p className="text-lg text-slate-300 max-w-[350px] font-bold">
                   Adicione uma nova despesa para começar
                 </p>
               </div>

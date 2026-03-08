@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { Category } from "../Types/Category";
+import { getCurrentMonth } from "../Utils/Date";
 
 export interface Note {
   id: string;
@@ -22,14 +23,16 @@ export interface Transaction {
 }
 
 interface FinanceState {
+  currentMonth: string;
+  setCurrentMonth: (month: string) => void;
+
   transactions: Transaction[];
   notes: Note[];
-  
+
   addTransaction: (transaction: Transaction) => void;
   removeTransaction: (id: string) => void;
   updateTransactionAmount: (id: string, amount: number) => void;
-  
-  // Métodos para notas
+
   addNote: (note: Note) => void;
   removeNote: (id: string) => void;
   togglePinNote: (id: string) => void;
@@ -44,7 +47,9 @@ interface FinanceState {
     totalExpense: number;
     balance: number;
   };
+
   getExpensePercentage: () => number;
+
   getDistribuition: () => {
     emergency: number;
     invest: number;
@@ -55,6 +60,10 @@ interface FinanceState {
 }
 
 export const useFinanceStore = create<FinanceState>((set, get) => ({
+  currentMonth: getCurrentMonth(),
+
+  setCurrentMonth: (month: string) => set({ currentMonth: month }),
+
   transactions: [],
   notes: [],
 
@@ -72,7 +81,7 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
   updateTransactionAmount: (id, amount) =>
     set((state) => ({
       transactions: state.transactions.map((t) =>
-        t.id === id ? { ...t, amount } : t
+        t.id === id ? { ...t, amount } : t,
       ),
     })),
 
@@ -90,15 +99,13 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
   togglePinNote: (id) =>
     set((state) => ({
       notes: state.notes.map((n) =>
-        n.id === id ? { ...n, pinned: !n.pinned } : n
+        n.id === id ? { ...n, pinned: !n.pinned } : n,
       ),
     })),
 
   updateNote: (id, content) =>
     set((state) => ({
-      notes: state.notes.map((n) =>
-        n.id === id ? { ...n, content } : n
-      ),
+      notes: state.notes.map((n) => (n.id === id ? { ...n, content } : n)),
     })),
 
   getNotesByMonth: (month) => {
@@ -107,7 +114,8 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
   },
 
   getTotals: () => {
-    const { transactions } = get();
+    const { currentMonth } = get();
+    const transactions = get().getTransactionsByMonth(currentMonth);
 
     const totals = transactions.reduce(
       (acc, transaction) => {
@@ -116,9 +124,10 @@ export const useFinanceStore = create<FinanceState>((set, get) => ({
         } else {
           acc.expense += transaction.amount;
         }
+
         return acc;
       },
-      { income: 0, expense: 0 }
+      { income: 0, expense: 0 },
     );
 
     return {

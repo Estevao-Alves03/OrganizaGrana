@@ -22,37 +22,35 @@ import { Pie, PieChart, Cell, BarChart, Bar, XAxis, YAxis } from "recharts";
 import { categoryColors } from "../../Utils/categoryColors";
 import { useFinanceStore } from "../../Store/FinanceStore";
 
-
 export default function GraphicsExpenses() {
+  const transactions = useFinanceStore((state) => state.transactions);
+  const getTotals = useFinanceStore((state) => state.getTotals);
 
-const transactions = useFinanceStore((state) => state.transactions)
-const getTotals = useFinanceStore((state) => state.getTotals)
+  const totals = getTotals();
+  const totalExpense = totals.totalExpense;
 
-const totals = getTotals()
-const totalExpense = totals.totalExpense
-
-const expenses = transactions.filter(t => t.type === "expense")
+  const expenses = transactions.filter((t) => t.type === "expense");
 
   const chartData = Object.values(
-  expenses.reduce(
-    (acc, expense) => {
-      if (!acc[expense.category]) {
-        acc[expense.category] = {
-          category: expense.category,
-          value: 0,
-          fill: categoryColors[expense.category],
-        };
-      }
+    expenses.reduce(
+      (acc, expense) => {
+        if (!acc[expense.category]) {
+          acc[expense.category] = {
+            category: expense.category,
+            value: 0,
+            fill: categoryColors[expense.category],
+          };
+        }
 
-      acc[expense.category].value += expense.amount;
+        acc[expense.category].value += expense.amount;
 
-      return acc;
-    },
-    {} as Record<string, { category: string; value: number; fill: string }>
-  )
-);
+        return acc;
+      },
+      {} as Record<string, { category: string; value: number; fill: string }>,
+    ),
+  );
 
-console.log(transactions)
+  console.log(transactions);
 
   const chartConfig = {
     value: {
@@ -62,24 +60,31 @@ console.log(transactions)
 
   return (
     <div className="mt-6">
-      <Card className="shadow-xl">
+      <Card className="bg-slate-900 border-slate-600 ">
         <CardHeader>
-          <CardTitle className="text-xl font-bold font-sans">
+          <CardTitle className="text-xl font-bold font-sans text-white">
             Visão geral dos gastos
           </CardTitle>
-          <CardDescription className="text-base font-sans font-medium text-gray-500">
-            Total: R$ {totalExpense.toLocaleString("pt-BR")} em {expenses.length} despesas
+          <CardDescription className="text-base font-sans font-medium text-gray-300">
+            Total: R$ {totalExpense.toLocaleString("pt-BR")} em{" "}
+            {expenses.length} despesas
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="category" className="w-full">
             {/* Tabs */}
-            <TabsList className="border p-1 rounded-lg w-full h-[45px]">
-              <TabsTrigger value="category" className="flex-1 rounded-md text-lg font-semibold">
+            <TabsList className="border p-1 rounded-lg w-full h-[45px] bg-slate-900 border-slate-600 ">
+              <TabsTrigger
+                value="category"
+                className="flex-1 rounded-md text-lg font-semibold"
+              >
                 Por Categoria
               </TabsTrigger>
 
-              <TabsTrigger value="expense" className="flex-1 rounded-md text-lg font-semibold">
+              <TabsTrigger
+                value="expense"
+                className="flex-1 rounded-md text-lg font-semibold"
+              >
                 Por Despesa
               </TabsTrigger>
             </TabsList>
@@ -137,13 +142,13 @@ console.log(transactions)
                               className="h-4 w-4 rounded-full"
                               style={{ backgroundColor: item.fill }}
                             />
-                            <span className="flex-1 text-base text-gray-700 font-medium">
+                            <span className="flex-1 text-lg text-gray-300 font-medium">
                               {item.category}
                             </span>
-                            <span className="font-mono text-base text-gray-700">
+                            <span className="font-mono text-lg text-white">
                               R$ {item.value.toLocaleString("pt-BR")}
                             </span>
-                            <span className="w-14 text-right font-mono font-medium text-gray-800 text-sm text-muted-foreground">
+                            <span className="w-14 text-right font-mono font-medium text-slate-300 text-base text-muted-foreground">
                               {percentage}%
                             </span>
                           </div>
@@ -154,7 +159,7 @@ console.log(transactions)
                 );
               })()}
             </TabsContent>
-            
+
             <TabsContent value="expense" className="w-full mt-6">
               {/* cria uma cópia do chartData e ordena do maior para o menor */}
               {(() => {
@@ -164,7 +169,7 @@ console.log(transactions)
                 return (
                   <ChartContainer
                     config={chartConfig}
-                    className="h-[350px] w-full"
+                    className="h-[400px] w-full"
                   >
                     <BarChart
                       data={sortedChartData}
@@ -177,15 +182,21 @@ console.log(transactions)
                         type="category"
                         tickLine={false}
                         axisLine={false}
+                        tick={{ fill: "#ffffff", fontSize: 12 }}
+                        style={{ fill: "#fff" }}
                       />
                       <XAxis
                         type="number"
-                        tickFormatter={(valeu: number) =>
-                          `R$ ${valeu.toLocaleString("pt-BR")}`
+                        tick={{ fill: "#ffffff", fontSize: 12 }}
+                        style={{ fill: "#fff" }}
+                        axisLine={{ stroke: "#ffffff" }}
+                        tickLine={{ stroke: "#ffffff" }}
+                        tickFormatter={(value: number) =>
+                          `R$ ${value.toLocaleString("pt-BR")}`
                         }
                       />
                       <ChartTooltip
-                        cursor={{ fill: "rgba(0,0,0,0.05)" }}
+                        cursor={false}
                         content={({ active, payload }) => {
                           if (!active || !payload?.length) return null;
 

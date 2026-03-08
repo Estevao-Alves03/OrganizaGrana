@@ -31,12 +31,12 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
       {sortedExpenses.map((expense) => (
         <Card
           key={expense.id}
-          className="bg-zinc-50 hover:bg-zinc-100 shadow-md w-full relative"
+          className="hover:bg-slate-800/20 bg-slate-900 border-slate-600 w-full relative"
         >
           {/* Ícone de fixar - aparece apenas se for despesa fixa */}
           {expense.fixed && (
-            <div className="absolute -top-2 -right-2 z-10">
-              <div className="bg-green-600 rounded-full p-1.5 shadow-md">
+            <div className="absolute -top-4 -right-4 z-10">
+              <div className="bg-green-900 border border-emerald-600 rounded-full p-1.5 shadow-md">
                 <PiPushPinDuotone className="text-white rotate-20" size={16} />
               </div>
             </div>
@@ -55,7 +55,7 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
             {/* COLUNA 2: Texto (título + categoria + nota) */}
             <div className="flex flex-col min-w-0">
               <div className="flex items-center flex-wrap gap-1.5">
-                <h2 className="font-bold text-lg truncate max-w-[200px]">
+                <h2 className="font-bold text-lg truncate max-w-[200px] text-white">
                   {expense.name}
                 </h2>
                 <span className="text-sm font-medium font-sans border bg-gray-200 px-3 py-1 rounded-full text-gray-600 whitespace-nowrap flex-shrink-0">
@@ -64,8 +64,8 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
               </div>
 
               {expense.notes && (
-                <p className="text-sm text-gray-500 mt-0.5 flex items-center gap-2 cursor-help w-full overflow-hidden">
-                  <IoDocumentTextOutline size={16} className="flex-shrink-0" />
+                <p className="text-base font-medium text-gray-300 mt-1 flex items-center gap-2 cursor-help w-full overflow-hidden">
+                  <IoDocumentTextOutline size={16} className="flex-shrink-0 text-white font-bold mb-0.5 " />
                   <span title={expense.notes} className="truncate block">
                     {expense.notes}
                   </span>
@@ -76,8 +76,8 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
             {/* COLUNA 3: Valor + botão */}
             <div className="flex items-center gap-4 flex-shrink-0 justify-self-end">
               {editingAmount === expense.id ? (
-                <div className="flex items-center border-2 border-green-500 rounded-lg px-3 py-2 w-fit bg-green-50">
-                  <span className="text-base font-bold text-gray-600 mr-1">R$</span>
+                <div className="flex items-center border-2 text-white bg-slate-900 border-emerald-600 rounded-lg px-3 py-2 w-fit">
+                  <span className="text-base font-bold text-gray-300 mr-1">R$</span>
 
                   <input
                     type="number"
@@ -109,7 +109,7 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
                     setEditingAmount(expense.id);
                     setTempAmount(String(expense.amount ?? ""));
                   }}
-                  className="font-bold text-lg hover:text-green-600 cursor-pointer transition-all duration-300 whitespace-nowrap"
+                  className="font-bold text-lg text-white hover:text-green-600 cursor-pointer transition-all duration-300 whitespace-nowrap"
                 >
                   R${" "}
                   {(expense.amount ?? 0).toLocaleString("pt-BR", {
@@ -121,7 +121,7 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
 
               <button
                 onClick={() => removeTransaction(expense.id)}
-                className="group p-2 hover:bg-red-400 rounded-lg border flex-shrink-0"
+                className="group p-2 hover:bg-red-900 hover:border-red-400 rounded-lg border flex-shrink-0"
               >
                 <FaTrash className="opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 text-white" />
               </button>

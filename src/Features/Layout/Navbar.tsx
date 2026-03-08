@@ -2,14 +2,14 @@ import { FaWallet } from "react-icons/fa";
 
 export default function Navbar() {
   return (
-    <header className="bg-white border-b border-gray-200 shadow-sm">
+    <header className="bg-slate-900 border-slate-600 border-b pt-2 shadow-sm shadow-stone-950">
       <div className="flex items-center justify-content mx-44 mt-6 mb-6">
-        <div className="bg-green-200 text-green-700 px-2 py-2 rounded-lg mr-3">
+        <div className="bg-green-950 text-emerald-600 border border-emerald-600 px-2 py-2 rounded-lg mr-3">
           <FaWallet className="text-3xl" />
         </div>
         <section>
-          <h1 className="text-3xl font-bold">MeuBolso</h1>
-          <p className="text-base text-gray-700 font-medium">Controle Financeiro Pessoal</p>
+          <h1 className="text-3xl font-bold text-white">MeuBolso</h1>
+          <p className="text-base text-gray-300 font-medium">Controle Financeiro Pessoal</p>
         </section>
       </div>
     </header>

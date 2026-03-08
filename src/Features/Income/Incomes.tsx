@@ -15,15 +15,15 @@ import IncomeForm from "./IncomeForm";
 export default function Incomes() {
   return (
     <div className="">
-      <Card className="shadow-xl">
+      <Card className="bg-slate-900 border-slate-600 ">
         <CardHeader>
           <div className="flex items-center gap-4">
-            <div className="p-3 text-green-700 bg-green-200 rounded-lg text-2xl">
+            <div className="p-3 bg-green-950 text-emerald-600 border border-emerald-600 rounded-lg text-2xl">
               <PiCurrencyDollar size={18} />
             </div>
             <div>
-              <CardTitle className="text-xl font-bold">Suas Rendas</CardTitle>
-              <CardDescription className="text-lg text-zinc-500 font-sans font-medium">
+              <CardTitle className="text-xl font-bold text-white">Suas Rendas</CardTitle>
+              <CardDescription className="text-lg text-zinc-300 font-sans font-medium">
                 Adicione suas fontes de renda do mês
               </CardDescription>
               {/* Total: R$ 00,00 de x fonte */}

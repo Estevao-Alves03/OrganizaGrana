@@ -20,18 +20,18 @@ export default function IncomeList() {
       {incomes.map((income) => (
         <Card
           key={income.id}
-          className="bg-zinc-50 hover:bg-zinc-100 shadow-md"
+          className="hover:bg-slate-800/20 bg-slate-900 border-slate-600"
         >
           <div className="flex items-center justify-between m-4">
             <section className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-green-600" />
-              <h2 className="font-bold font-sans text-lg">{income.name}</h2>
+              <h2 className="font-bold font-sans text-lg text-white">{income.name}</h2>
             </section>
 
             <section className="flex items-center gap-4 mr-4">
               {editingAmount === income.id ? (
-                <div className="flex items-center border-2 border-green-500 rounded-lg px-3 py-2 w-fit bg-green-50">
-                  <span className="text-base font-bold text-gray-600 mr-1">R$</span>
+                <div className="flex items-center text-white border-2 bg-slate-900 border-emerald-600 rounded-lg px-3 py-2 w-fit">
+                  <span className="text-base font-bold text-gray-300 mr-1">R$</span>
 
                   <input
                     type="number"
@@ -63,7 +63,7 @@ export default function IncomeList() {
                     setEditingAmount(income.id);
                     setTempAmount(String(income.amount ?? ""));
                   }}
-                  className="font-bold text-lg hover:text-green-600 cursor-pointer transition-all duration-300"
+                  className="font-bold text-lg text-white hover:text-green-600 cursor-pointer transition-all duration-300"
                 >
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
@@ -74,7 +74,7 @@ export default function IncomeList() {
 
               <button
                 onClick={() => removeTransaction(income.id)}
-                className="group p-2 hover:bg-red-500 rounded-lg border"
+                className="group p-2 hover:bg-red-900 hover:border-red-400 rounded-lg border"
               >
                 <FaTrash className="opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 text-white" />
               </button>

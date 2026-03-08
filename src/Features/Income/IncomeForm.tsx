@@ -40,9 +40,9 @@ export default function IncomeForm() {
       <IncomeList />
 
       {/* Card do formulário */}
-      <Card className="border border-dashed border-zinc-300 mt-6">
+      <Card className="border border-dashed bg-slate-900 border-slate-400  mt-6">
         <CardHeader>
-          <CardTitle className="text-lg font-bold font-sans">
+          <CardTitle className="text-xl font-bold font-sans text-white">
             Adicionar fonte de renda
           </CardTitle>
         </CardHeader>
@@ -57,14 +57,14 @@ export default function IncomeForm() {
                 name="nameIncome"
                 required
                 placeholder="Ex: Salário, Freelance, Aluguel..."
-                className="w-full border border-zinc-300 rounded-lg px-4 py-2 text-left 
-                  placeholder:text-gray-400 text-lg font-bold
-                  focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full border rounded-lg px-4 py-2 text-left 
+                  placeholder:text-gray-300 text-lg font-bold
+                  focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-900 text-white"
               />
             </section>
 
             <section className="relative w-40 shrink-0">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 font-bold">
                 R$
               </span>
 
@@ -74,18 +74,18 @@ export default function IncomeForm() {
                 required
                 inputMode="decimal"
                 placeholder="00,00"
-                className="appearance-none border border-zinc-300 rounded-lg 
+                className="appearance-none border rounded-lg 
                   pl-12 pr-4 py-2 w-full
-                  placeholder:text-gray-400 text-lg font-bold
-                  focus:outline-none focus:ring-2 focus:ring-green-400"
+                  placeholder:text-gray-300 text-lg font-bold
+                  focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-900 text-white"
               />
             </section>
 
             <Button
               type="submit"
-              className="bg-green-600 hover:bg-green-700 shrink-0 h-[45px] w-[45px] "
+              className="bg-green-800 hover:bg-green-900 shrink-0 h-[45px] w-[45px] "
             >
-              <IoAddOutline />
+              <IoAddOutline className="!h-[50px] !font-medium !text-white !font-extraligth"/>
             </Button>
           </form>
         </CardContent>
