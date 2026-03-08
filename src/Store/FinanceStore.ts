@@ -1,13 +1,14 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import type { Category } from "../Types/Category";
 import { getCurrentMonth } from "../Utils/Date";
 
 export interface Note {
   id: string;
   content: string;
-  date: string; // formato ISO ou DD/MM/YYYY
+  date: string;
   pinned: boolean;
-  month: string; // "2026-03" para março/2026
+  month: string;
 }
 
 export interface Transaction {
@@ -59,124 +60,144 @@ interface FinanceState {
   };
 }
 
-export const useFinanceStore = create<FinanceState>((set, get) => ({
-  currentMonth: getCurrentMonth(),
+export const useFinanceStore = create<FinanceState>()(
+  persist(
+    (set, get) => ({
+      currentMonth: getCurrentMonth(),
 
-  setCurrentMonth: (month: string) => set({ currentMonth: month }),
+      setCurrentMonth: (month) => set({ currentMonth: month }),
 
-  transactions: [],
-  notes: [],
+      transactions: [],
+      notes: [],
 
-  addTransaction: (transaction) =>
-    set((state) => ({
-      transactions: [...state.transactions, transaction],
-    })),
+      addTransaction: (transaction) =>
+        set((state) => ({
+          transactions: [...state.transactions, transaction],
+        })),
 
-  removeTransaction: (id) =>
-    set((state) => ({
-      transactions: state.transactions.filter((t) => t.id !== id),
-    })),
+      removeTransaction: (id) =>
+        set((state) => ({
+          transactions: state.transactions.filter((t) => t.id !== id),
+        })),
 
-  // ✅ AGORA ESTÁ DENTRO DO OBJETO
-  updateTransactionAmount: (id, amount) =>
-    set((state) => ({
-      transactions: state.transactions.map((t) =>
-        t.id === id ? { ...t, amount } : t,
-      ),
-    })),
+      updateTransactionAmount: (id, amount) =>
+        set((state) => ({
+          transactions: state.transactions.map((t) =>
+            t.id === id ? { ...t, amount } : t,
+          ),
+        })),
 
-  // Métodos para notas
-  addNote: (note) =>
-    set((state) => ({
-      notes: [...state.notes, note],
-    })),
+      addNote: (note) =>
+        set((state) => ({
+          notes: [...state.notes, note],
+        })),
 
-  removeNote: (id) =>
-    set((state) => ({
-      notes: state.notes.filter((n) => n.id !== id),
-    })),
+      removeNote: (id) =>
+        set((state) => ({
+          notes: state.notes.filter((n) => n.id !== id),
+        })),
 
-  togglePinNote: (id) =>
-    set((state) => ({
-      notes: state.notes.map((n) =>
-        n.id === id ? { ...n, pinned: !n.pinned } : n,
-      ),
-    })),
+      togglePinNote: (id) =>
+        set((state) => ({
+          notes: state.notes.map((n) =>
+            n.id === id ? { ...n, pinned: !n.pinned } : n,
+          ),
+        })),
 
-  updateNote: (id, content) =>
-    set((state) => ({
-      notes: state.notes.map((n) => (n.id === id ? { ...n, content } : n)),
-    })),
+      updateNote: (id, content) =>
+        set((state) => ({
+          notes: state.notes.map((n) =>
+            n.id === id ? { ...n, content } : n,
+          ),
+        })),
 
-  getNotesByMonth: (month) => {
-    const { notes } = get();
-    return notes.filter((n) => n.month === month);
-  },
-
-  getTotals: () => {
-    const { currentMonth } = get();
-    const transactions = get().getTransactionsByMonth(currentMonth);
-
-    const totals = transactions.reduce(
-      (acc, transaction) => {
-        if (transaction.type === "income") {
-          acc.income += transaction.amount;
-        } else {
-          acc.expense += transaction.amount;
-        }
-
-        return acc;
+      getNotesByMonth: (month) => {
+        const { notes } = get();
+        return notes.filter((n) => n.month === month);
       },
-      { income: 0, expense: 0 },
-    );
 
-    return {
-      totalIncome: totals.income,
-      totalExpense: totals.expense,
-      balance: totals.income - totals.expense,
-    };
-  },
+      getTransactionsByMonth: (month) => {
+        const { transactions } = get();
 
-  getExpensePercentage: () => {
-    const { totalExpense, totalIncome } = get().getTotals();
-    if (totalIncome === 0) return 0;
-    return (totalExpense / totalIncome) * 100;
-  },
-
-  getDistribuition: () => {
-    const { balance } = get().getTotals();
-    return {
-      emergency: balance * 0.3,
-      invest: balance * 0.2,
-      leisure: balance * 0.2,
-      education: balance * 0.15,
-      costs: balance * 0.15,
-    };
-  },
-
-  getTransactionsByMonth: (month: string) => {
-    const { transactions } = get();
-    return transactions.filter((t) => {
-      if (t.fixed) {
-        return !t.hiddenMonths?.includes(month);
-      }
-      return t.month === month;
-    });
-  },
-
-  removeTransactionByMonth: (id, month) =>
-    set((state) => ({
-      transactions: state.transactions
-        .map((t) => {
-          if (t.id !== id) return t;
+        return transactions.filter((t) => {
           if (t.fixed) {
-            return {
-              ...t,
-              hiddenMonths: [...(t.hiddenMonths || []), month],
-            };
+            return !t.hiddenMonths?.includes(month);
           }
-          return null;
-        })
-        .filter(Boolean) as Transaction[],
-    })),
-}));
+
+          return t.month === month;
+        });
+      },
+
+      removeTransactionByMonth: (id, month) =>
+        set((state) => ({
+          transactions: state.transactions
+            .map((t) => {
+              if (t.id !== id) return t;
+
+              if (t.fixed) {
+                return {
+                  ...t,
+                  hiddenMonths: [...(t.hiddenMonths || []), month],
+                };
+              }
+
+              return null;
+            })
+            .filter(Boolean) as Transaction[],
+        })),
+
+      getTotals: () => {
+        const { currentMonth } = get();
+        const transactions = get().getTransactionsByMonth(currentMonth);
+
+        const totals = transactions.reduce(
+          (acc, transaction) => {
+            if (transaction.type === "income") {
+              acc.income += transaction.amount;
+            } else {
+              acc.expense += transaction.amount;
+            }
+
+            return acc;
+          },
+          { income: 0, expense: 0 },
+        );
+
+        return {
+          totalIncome: totals.income,
+          totalExpense: totals.expense,
+          balance: totals.income - totals.expense,
+        };
+      },
+
+      getExpensePercentage: () => {
+        const { totalExpense, totalIncome } = get().getTotals();
+
+        if (totalIncome === 0) return 0;
+
+        return (totalExpense / totalIncome) * 100;
+      },
+
+      getDistribuition: () => {
+        const { balance } = get().getTotals();
+
+        return {
+          emergency: balance * 0.3,
+          invest: balance * 0.2,
+          leisure: balance * 0.2,
+          education: balance * 0.15,
+          costs: balance * 0.15,
+        };
+      },
+    }),
+    {
+      name: "finance-storage",
+
+      partialize: (state) => ({
+        transactions: state.transactions,
+        notes: state.notes,
+        currentMonth: state.currentMonth,
+      }),
+    },
+  ),
+);
