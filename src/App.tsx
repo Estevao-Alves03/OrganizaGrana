@@ -5,10 +5,12 @@ import DetailsDate from "./Features/Layout/DetailsDate";
 import Navbar from "./Features/Layout/Navbar";
 import Notes from "./Features/Observations/Notes";
 import MoneyCard from "./Features/Observations/MoneyCard";
+import { ToastContainer } from "./Features/Layout/ToastContainer";
 
 export default function App() {
   return (
     <div className="min-h-screen pb-20">
+      <ToastContainer/>
       <Navbar />
       <DetailsDate />
       <SummaryCard />

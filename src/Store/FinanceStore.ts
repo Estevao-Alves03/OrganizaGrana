@@ -21,7 +21,6 @@ export interface Transaction {
   fixed?: boolean;
   month: string;
   hiddenMonths?: string[];
-  // Valores específicos por mês
   monthlyValues?: Record<string, number>;
 }
 
@@ -37,7 +36,7 @@ interface FinanceState {
   updateTransactionAmount: (id: string, amount: number) => void;
   updateTransactionAmountForMonth: (id: string, month: string, amount: number) => void;
   
-  // 🟢 NOVAS FUNÇÕES
+
   updateTransactionName: (id: string, name: string) => void;
   toggleTransactionFixed: (id: string) => void;
 
@@ -113,7 +112,7 @@ export const useFinanceStore = create<FinanceState>()(
           }),
         })),
 
-      // 🟢 NOVA FUNÇÃO: Atualizar nome da transação
+
       updateTransactionName: (id, name) =>
         set((state) => ({
           transactions: state.transactions.map((t) =>
@@ -121,7 +120,7 @@ export const useFinanceStore = create<FinanceState>()(
           ),
         })),
 
-      // 🟢 NOVA FUNÇÃO: Fixar/Desfixar transação
+      
       toggleTransactionFixed: (id) =>
         set((state) => ({
           transactions: state.transactions.map((t) => {

@@ -6,24 +6,31 @@ import { categoryColors } from "../../Utils/categoryColors";
 import { useFinanceStore } from "../../Store/FinanceStore";
 import type { Transaction } from "../../Store/FinanceStore";
 import { useState } from "react";
+import { showToast } from "../Layout/ToastContainer";
 
 interface ExpensesListProps {
   expenses: Transaction[];
 }
 
 export default function ExpensesList({ expenses }: ExpensesListProps) {
-  const removeTransactionByMonth = useFinanceStore((state) => state.removeTransactionByMonth);
+  const removeTransactionByMonth = useFinanceStore(
+    (state) => state.removeTransactionByMonth,
+  );
   const updateTransactionAmountForMonth = useFinanceStore(
     (state) => state.updateTransactionAmountForMonth,
   );
-  const updateTransactionName = useFinanceStore((state) => state.updateTransactionName);
-  const toggleTransactionFixed = useFinanceStore((state) => state.toggleTransactionFixed);
-  
+  const updateTransactionName = useFinanceStore(
+    (state) => state.updateTransactionName,
+  );
+  const toggleTransactionFixed = useFinanceStore(
+    (state) => state.toggleTransactionFixed,
+  );
+
   const currentMonth = useFinanceStore((state) => state.currentMonth);
 
   const [editingAmount, setEditingAmount] = useState<string | null>(null);
   const [tempAmount, setTempAmount] = useState("");
-  
+
   const [editingName, setEditingName] = useState<string | null>(null);
   const [tempName, setTempName] = useState("");
 
@@ -35,23 +42,56 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
 
   const handleUpdateAmount = (expenseId: string, newAmount: number) => {
     updateTransactionAmountForMonth(expenseId, currentMonth, newAmount);
-  };
 
+    showToast({
+      type: "success",
+      text: "Valor atualizado com sucesso",
+    });
+  };
   const handleRemove = (expenseId: string) => {
+    const expense = expenses.find((e) => e.id === expenseId);
+
+    if (!expense) return;
+
+    if (expense.fixed) {
+      showToast({
+        type: "error",
+        text: "Despesas fixas não podem ser excluídas",
+      });
+      return;
+    }
+
     removeTransactionByMonth(expenseId, currentMonth);
+
+    showToast({
+      type: "success",
+      text: `Despesa "${expense.name}" removida`,
+    });
   };
 
   const handleUpdateName = (expenseId: string, newName: string) => {
     if (newName.trim()) {
       updateTransactionName(expenseId, newName);
+
+      showToast({
+        type: "success",
+        text: "Nome da despesa atualizado",
+      });
     }
+
     setEditingName(null);
   };
 
   const handleToggleFixed = (expenseId: string) => {
     toggleTransactionFixed(expenseId);
-  };
 
+    const expense = expenses.find((e) => e.id === expenseId);
+
+    showToast({
+      type: "success",
+      text: expense?.fixed ? "Despesa desfixada" : "Despesa fixada",
+    });
+  };
   return (
     <div className="w-full grid grid-rows gap-3">
       {sortedExpenses.map((expense) => (
@@ -114,7 +154,10 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
 
               {expense.notes && (
                 <p className="text-base font-medium text-gray-300 mt-1 flex items-center gap-2 cursor-help w-full overflow-hidden">
-                  <IoDocumentTextOutline size={16} className="flex-shrink-0 text-white font-bold mb-0.5 " />
+                  <IoDocumentTextOutline
+                    size={16}
+                    className="flex-shrink-0 text-white font-bold mb-0.5 "
+                  />
                   <span title={expense.notes} className="truncate block">
                     {expense.notes}
                   </span>
@@ -127,7 +170,9 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
               {/* VALOR EDITÁVEL */}
               {editingAmount === expense.id ? (
                 <div className="flex items-center border-2 text-white bg-slate-900 border-emerald-600 rounded-lg px-3 py-2 w-fit">
-                  <span className="text-base font-bold text-gray-300 mr-1">R$</span>
+                  <span className="text-base font-bold text-gray-300 mr-1">
+                    R$
+                  </span>
                   <input
                     type="number"
                     value={tempAmount}
@@ -168,31 +213,39 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
                 className={`
                   group p-2 rounded-lg border flex-shrink-0
                   transition-all duration-300
-                  ${expense.fixed 
-                    ? 'bg-emerald-900 border-emerald-400 hover:bg-emerald-800' 
-                    : 'hover:bg-emerald-900 hover:border-emerald-400'
+                  ${
+                    expense.fixed
+                      ? "bg-emerald-900 border-emerald-400 hover:bg-emerald-800"
+                      : "hover:bg-emerald-900 hover:border-emerald-400"
                   }
                 `}
                 title={expense.fixed ? "Desfixar despesa" : "Fixar despesa"}
               >
-                <PiPushPinDuotone 
+                <PiPushPinDuotone
                   className={`
                     transition-all duration-300
-                    ${expense.fixed 
-                      ? 'opacity-100 scale-100 text-emerald-400' 
-                      : 'opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 text-white'
+                    ${
+                      expense.fixed
+                        ? "opacity-100 scale-100 text-emerald-400"
+                        : "opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 text-white"
                     }
-                  `} 
-                  size={16} 
+                  `}
+                  size={16}
                 />
               </button>
 
               {/* BOTÃO LIXEIRA */}
               <button
                 onClick={() => handleRemove(expense.id)}
-                className="group p-2 hover:bg-red-900 hover:border-red-400 rounded-lg border flex-shrink-0"
+                disabled={expense.fixed}
+                className={`group p-2 rounded-lg border flex-shrink-0
+  ${
+    expense.fixed
+      ? "opacity-30 cursor-not-allowed"
+      : "hover:bg-red-900 hover:border-red-400"
+  }`}
               >
-                <FaTrash className="opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 text-white" />
+                <FaTrash className="transition-all duration-300 text-white" />
               </button>
             </div>
           </div>

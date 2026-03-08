@@ -8,31 +8,44 @@ import {
 import { IoAddOutline } from "react-icons/io5";
 import IncomeList from "./IncomeList";
 import { useFinanceStore } from "../../Store/FinanceStore";
+import { showToast } from "../Layout/ToastContainer";
 
 export default function IncomeForm() {
   const addTransaction = useFinanceStore((state) => state.addTransaction);
 
   function handleAddIncome(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  e.preventDefault();
 
-    const formData = new FormData(e.currentTarget);
+  const formData = new FormData(e.currentTarget);
 
-    const nameIncome = formData.get("nameIncome") as string;
-    const rawValue = formData.get("price") as string;
-    const priceIncome = Number(rawValue.replace(",", "."));
+  const nameIncome = formData.get("nameIncome") as string;
+  const rawValue = formData.get("price") as string;
+  const priceIncome = Number(rawValue.replace(",", "."));
 
-    if (!nameIncome || !priceIncome) return;
-    addTransaction({
-      id: crypto.randomUUID(),
-      name: nameIncome,
-      amount: priceIncome,
-      type: "income",
-      category: "Renda",
-      month: new Date().toISOString().slice(0, 7),
+  if (!nameIncome || !priceIncome) {
+    showToast({
+      type: "error",
+      text: "Preencha nome e valor da renda",
     });
-
-    e.currentTarget.reset();
+    return;
   }
+
+  addTransaction({
+    id: crypto.randomUUID(),
+    name: nameIncome,
+    amount: priceIncome,
+    type: "income",
+    category: "Renda",
+    month: new Date().toISOString().slice(0, 7),
+  });
+
+  showToast({
+    type: "success",
+    text: `Renda "${nameIncome}" adicionada`,
+  });
+
+  e.currentTarget.reset();
+}
 
   return (
     <div>

@@ -20,6 +20,7 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "../../components/ui/pagination";
+import { showToast } from "../Layout/ToastContainer";
 
 export default function Notes() {
   const [newNote, setNewNote] = useState("");
@@ -58,28 +59,28 @@ export default function Notes() {
     while (remainingPinned.length > 0 || remainingNormal.length > 0) {
       const pagePinned = [];
       const pageNormal = [];
-      
+
       // 1. Colocar fixadas nesta página (quantas couberem)
       const pinnedSpace = Math.min(remainingPinned.length, NOTES_PER_PAGE);
       if (pinnedSpace > 0) {
         pagePinned.push(...remainingPinned.splice(0, pinnedSpace));
       }
-      
+
       // 2. Calcular espaço restante para normais
       const remainingSpace = NOTES_PER_PAGE - pagePinned.length;
-      
+
       // 3. Colocar normais nesta página (se houver espaço)
       if (remainingSpace > 0 && remainingNormal.length > 0) {
         const normalToAdd = Math.min(remainingNormal.length, remainingSpace);
         pageNormal.push(...remainingNormal.splice(0, normalToAdd));
       }
-      
+
       pages[pageIndex] = {
         pinned: pagePinned,
         normal: pageNormal,
-        hasPinned: pagePinned.length > 0
+        hasPinned: pagePinned.length > 0,
       };
-      
+
       pageIndex++;
     }
 
@@ -88,7 +89,11 @@ export default function Notes() {
 
   const pages = useMemo(() => getPages(), [pinnedNotes, normalNotes]);
   const totalPages = pages.length;
-  const currentPage = pages[page - 1] || { pinned: [], normal: [], hasPinned: false };
+  const currentPage = pages[page - 1] || {
+    pinned: [],
+    normal: [],
+    hasPinned: false,
+  };
 
   // 🟢 Resetar página se ela não existir mais
   useEffect(() => {
@@ -98,7 +103,13 @@ export default function Notes() {
   }, [totalPages, page]);
 
   const handleSaveNote = () => {
-    if (!newNote.trim()) return;
+    if (!newNote.trim()) {
+      showToast({
+        type: "error",
+        text: "A nota não pode estar vazia",
+      });
+      return;
+    }
 
     addNote({
       id: crypto.randomUUID(),
@@ -106,6 +117,11 @@ export default function Notes() {
       date: new Date().toLocaleDateString("pt-BR"),
       pinned: false,
       month: currentMonth,
+    });
+
+    showToast({
+      type: "success",
+      text: "Nota criada com sucesso",
     });
 
     setNewNote("");
@@ -159,11 +175,12 @@ export default function Notes() {
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-sm font-semibold text-gray-400">
-                  Total: {notes.length} nota{notes.length > 1 ? 's' : ''}
+                  Total: {notes.length} nota{notes.length > 1 ? "s" : ""}
                 </p>
                 {pinnedNotes.length > 0 && (
                   <p className="text-xs text-emerald-400 mt-1">
-                    📌 {pinnedNotes.length} fixada{pinnedNotes.length > 1 ? 's' : ''}
+                    📌 {pinnedNotes.length} fixada
+                    {pinnedNotes.length > 1 ? "s" : ""}
                   </p>
                 )}
               </div>
@@ -236,9 +253,10 @@ export default function Notes() {
                       <PaginationPrevious
                         onClick={() => setPage((p) => Math.max(p - 1, 1))}
                         className={`
-                          ${page === 1 
-                            ? 'pointer-events-none opacity-50' 
-                            : 'cursor-pointer hover:bg-white/10'
+                          ${
+                            page === 1
+                              ? "pointer-events-none opacity-50"
+                              : "cursor-pointer hover:bg-white/10"
                           }
                           text-white font-bold
                         `}
@@ -257,9 +275,10 @@ export default function Notes() {
                             onClick={() => setPage(pageNumber)}
                             className={`
                               cursor-pointer relative
-                              ${isActive
-                                ? 'bg-green-600 text-white hover:bg-green-700 border-green-600'
-                                : 'text-white hover:bg-white/10'
+                              ${
+                                isActive
+                                  ? "bg-green-600 text-white hover:bg-green-700 border-green-600"
+                                  : "text-white hover:bg-white/10"
                               }
                             `}
                           >
@@ -274,11 +293,14 @@ export default function Notes() {
 
                     <PaginationItem>
                       <PaginationNext
-                        onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
+                        onClick={() =>
+                          setPage((p) => Math.min(p + 1, totalPages))
+                        }
                         className={`
-                          ${page === totalPages 
-                            ? 'pointer-events-none opacity-50' 
-                            : 'cursor-pointer hover:bg-white/10'
+                          ${
+                            page === totalPages
+                              ? "pointer-events-none opacity-50"
+                              : "cursor-pointer hover:bg-white/10"
                           }
                           text-white font-bold
                         `}

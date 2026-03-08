@@ -3,6 +3,7 @@ import { Card, CardContent } from "../../components/ui/card";
 import { FaEdit, FaTrash, FaCheck } from "react-icons/fa";
 import { BsPinAngle, BsPinAngleFill } from "react-icons/bs";
 import { Textarea } from "../../components/ui/textarea";
+import { showToast } from "../Layout/ToastContainer";
 
 interface NotesItemProps {
   id: string;
@@ -27,12 +28,36 @@ export default function NotesItem({
   const [editContent, setEditContent] = useState(content);
   const [isExpanded, setIsExpanded] = useState(false); // 🟢 NOVO ESTADO
 
-  const handleSaveEdit = () => {
-    if (editContent.trim()) {
-      onUpdate(id, editContent);
-      setIsEditing(false);
-    }
-  };
+ const handleSaveEdit = () => {
+  if (editContent.trim()) {
+    onUpdate(id, editContent);
+
+    showToast({
+      type: "success",
+      text: "Nota atualizada",
+    });
+
+    setIsEditing(false);
+  }
+};
+
+const handleTogglePin = () => {
+  onTogglePin(id);
+
+  showToast({
+    type: "success",
+    text: pinned ? "Nota desfixada" : "Nota fixada",
+  });
+};
+
+const handleDelete = () => {
+  onDelete(id);
+
+  showToast({
+    type: "success",
+    text: "Nota removida",
+  });
+};
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -73,7 +98,7 @@ export default function NotesItem({
           {/* Botões */}
           <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button
-              onClick={() => onTogglePin(id)}
+              onClick={(handleTogglePin)}
               className={`
                 p-1.5 rounded-lg transition-all duration-200
                 ${
@@ -106,7 +131,7 @@ export default function NotesItem({
             )}
 
             <button
-              onClick={() => onDelete(id)}
+              onClick={(handleDelete)}
               className="p-1.5 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg"
               aria-label="Excluir nota"
             >

@@ -1,26 +1,20 @@
+import { useEffect, useState } from "react";
+// componentes
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,} from "../../components/ui/select";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "../../components/ui/card";
+import { Checkbox } from "../../components/ui/checkbox";
 import { Textarea } from "../../components/ui/textarea";
 import { Button } from "../../components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../components/ui/select";
-import { IoCloseOutline } from "react-icons/io5";
-import { useEffect, useState } from "react";
-import type { Category } from "../../Types/Category";
+// zustand
+import type { Transaction } from "../../Store/FinanceStore"; 
 import { useFinanceStore } from "../../Store/FinanceStore";
-import type { Transaction } from "../../Store/FinanceStore";
-import { Checkbox } from "../../components/ui/checkbox";
+// types
+import type { Category } from "../../Types/Category";
+// react icons
+import { IoCloseOutline } from "react-icons/io5";
+// paginas
+import { showToast } from "../Layout/ToastContainer";
+
 
 interface AddExpensesProps {
   onCloseCard: () => void;
@@ -56,6 +50,8 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
     };
 
     addTransaction(transaction);
+
+    showToast({type: "success", text: `Depesa ${transaction.name} adicionada com sucesso!`})
 
     onCloseCard();
   }
