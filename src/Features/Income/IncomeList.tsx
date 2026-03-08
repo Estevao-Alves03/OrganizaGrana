@@ -11,9 +11,16 @@ export default function IncomeList() {
   const updateTransactionAmount = useFinanceStore(
     (state) => state.updateTransactionAmount
   );
+  const updateTransactionName = useFinanceStore(
+    (state) => state.updateTransactionName
+  );
 
   const [editingAmount, setEditingAmount] = useState<string | null>(null);
   const [tempAmount, setTempAmount] = useState("");
+  
+  // 🟢 NOVOS ESTADOS PARA EDIÇÃO DE NOME
+  const [editingName, setEditingName] = useState<string | null>(null);
+  const [tempName, setTempName] = useState("");
 
   return (
     <div className="grid gap-3">
@@ -25,14 +32,48 @@ export default function IncomeList() {
           <div className="flex items-center justify-between m-4">
             <section className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-green-600" />
-              <h2 className="font-bold font-sans text-lg text-white">{income.name}</h2>
+              
+              {/* 🟢 NOME EDITÁVEL */}
+              {editingName === income.id ? (
+                <input
+                  type="text"
+                  value={tempName}
+                  autoFocus
+                  onChange={(e) => setTempName(e.target.value)}
+                  onBlur={() => {
+                    if (tempName.trim()) {
+                      updateTransactionName(income.id, tempName);
+                    }
+                    setEditingName(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (tempName.trim()) {
+                        updateTransactionName(income.id, tempName);
+                      }
+                      setEditingName(null);
+                    }
+                  }}
+                  className="bg-slate-800 text-white font-bold text-lg px-2 py-1 rounded border border-green-600 outline-none w-[200px]"
+                />
+              ) : (
+                <h2
+                  onClick={() => {
+                    setEditingName(income.id);
+                    setTempName(income.name);
+                  }}
+                  className="font-bold font-sans text-lg text-white cursor-pointer hover:text-green-600 transition-colors duration-300"
+                >
+                  {income.name}
+                </h2>
+              )}
             </section>
 
             <section className="flex items-center gap-4 mr-4">
+              {/* VALOR EDITÁVEL */}
               {editingAmount === income.id ? (
                 <div className="flex items-center text-white border-2 bg-slate-900 border-emerald-600 rounded-lg px-3 py-2 w-fit">
                   <span className="text-base font-bold text-gray-300 mr-1">R$</span>
-
                   <input
                     type="number"
                     value={tempAmount}

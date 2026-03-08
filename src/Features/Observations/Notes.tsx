@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -39,24 +39,63 @@ export default function Notes() {
   const togglePinNote = useFinanceStore((state) => state.togglePinNote);
   const updateNote = useFinanceStore((state) => state.updateNote);
 
-  const sortedNotes = useMemo(() => {
-    return [...notes].sort((a, b) => {
-      if (a.pinned && !b.pinned) return -1;
-      if (!a.pinned && b.pinned) return 1;
-      return 0;
-    });
+  // 🟢 SEPARAR fixadas e normais
+  const pinnedNotes = useMemo(() => {
+    return notes.filter((note) => note.pinned);
   }, [notes]);
 
-  const pinnedNotes = sortedNotes.filter((note) => note.pinned);
-  const normalNotes = sortedNotes.filter((note) => !note.pinned);
+  const normalNotes = useMemo(() => {
+    return notes.filter((note) => !note.pinned);
+  }, [notes]);
 
-  const totalPages = Math.ceil(normalNotes.length / NOTES_PER_PAGE);
+  // 🟢 FUNÇÃO PARA DISTRIBUIR PÁGINAS COM FIXADAS SEPARADAS
+  const getPages = () => {
+    const pages = [];
+    let remainingPinned = [...pinnedNotes];
+    let remainingNormal = [...normalNotes];
+    let pageIndex = 0;
 
-  const paginatedNotes = useMemo(() => {
-    const start = (page - 1) * NOTES_PER_PAGE;
-    const end = start + NOTES_PER_PAGE;
-    return normalNotes.slice(start, end);
-  }, [normalNotes, page]);
+    while (remainingPinned.length > 0 || remainingNormal.length > 0) {
+      const pagePinned = [];
+      const pageNormal = [];
+      
+      // 1. Colocar fixadas nesta página (quantas couberem)
+      const pinnedSpace = Math.min(remainingPinned.length, NOTES_PER_PAGE);
+      if (pinnedSpace > 0) {
+        pagePinned.push(...remainingPinned.splice(0, pinnedSpace));
+      }
+      
+      // 2. Calcular espaço restante para normais
+      const remainingSpace = NOTES_PER_PAGE - pagePinned.length;
+      
+      // 3. Colocar normais nesta página (se houver espaço)
+      if (remainingSpace > 0 && remainingNormal.length > 0) {
+        const normalToAdd = Math.min(remainingNormal.length, remainingSpace);
+        pageNormal.push(...remainingNormal.splice(0, normalToAdd));
+      }
+      
+      pages[pageIndex] = {
+        pinned: pagePinned,
+        normal: pageNormal,
+        hasPinned: pagePinned.length > 0
+      };
+      
+      pageIndex++;
+    }
+
+    return pages;
+  };
+
+  const pages = useMemo(() => getPages(), [pinnedNotes, normalNotes]);
+  const totalPages = pages.length;
+  const currentPage = pages[page - 1] || { pinned: [], normal: [], hasPinned: false };
+
+  // 🟢 Resetar página se ela não existir mais
+  useEffect(() => {
+    if (page > totalPages && totalPages > 0) {
+      setPage(totalPages);
+    }
+  }, [totalPages, page]);
 
   const handleSaveNote = () => {
     if (!newNote.trim()) return;
@@ -70,6 +109,7 @@ export default function Notes() {
     });
 
     setNewNote("");
+    setPage(1);
   };
 
   return (
@@ -81,12 +121,13 @@ export default function Notes() {
             <div className="text-2xl px-1.5 py-1.5 rounded-lg bg-amber-950 text-amber-600 border border-amber-600">
               <RiFilePaper2Line />
             </div>
-
             <section>
               <CardTitle className="text-xl font-sans font-bold text-white">
                 Observações Gerais
               </CardTitle>
-              <CardDescription  className="text-md font-sans font-medium text-gray-300">Anote lembretes sobre este mês</CardDescription>
+              <CardDescription className="text-md font-sans font-medium text-gray-300">
+                Anote lembretes sobre este mês
+              </CardDescription>
             </section>
           </div>
         </CardHeader>
@@ -110,18 +151,37 @@ export default function Notes() {
         </CardContent>
       </Card>
 
-      {/* CARD 2 - Lista de notas (só aparece se houver notas) */}
-      {sortedNotes.length > 0 && (
-        <Card className="shadow-xl overflow-hidden bg-slate-900 border-slate-600 ">
+      {/* CARD 2 - Lista de notas */}
+      {notes.length > 0 && (
+        <Card className="shadow-xl overflow-hidden bg-slate-900 border-slate-600">
           <CardContent className="p-6 space-y-6">
-            {/* NOTAS FIXADAS */}
-            {pinnedNotes.length > 0 && (
-              <div className="space-y-3 ">
+            {/* HEADER */}
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="text-sm font-semibold text-gray-400">
+                  Total: {notes.length} nota{notes.length > 1 ? 's' : ''}
+                </p>
+                {pinnedNotes.length > 0 && (
+                  <p className="text-xs text-emerald-400 mt-1">
+                    📌 {pinnedNotes.length} fixada{pinnedNotes.length > 1 ? 's' : ''}
+                  </p>
+                )}
+              </div>
+              {totalPages > 1 && (
+                <p className="text-sm text-gray-400">
+                  Página {page} de {totalPages}
+                </p>
+              )}
+            </div>
+
+            {/* NOTAS FIXADAS DA PÁGINA ATUAL */}
+            {currentPage.pinned.length > 0 && (
+              <div className="space-y-3">
                 <p className="text-sm font-semibold text-gray-500 flex items-center gap-2">
                   <span>📌</span> Fixadas
                 </p>
                 <div className="space-y-3">
-                  {pinnedNotes.map((note) => (
+                  {currentPage.pinned.map((note) => (
                     <NotesItem
                       key={note.id}
                       id={note.id}
@@ -137,16 +197,21 @@ export default function Notes() {
               </div>
             )}
 
-            {/* NOTAS NORMAIS */}
-            {normalNotes.length > 0 && (
-              <div className="space-y-3 ">
-                {pinnedNotes.length > 0 && (
-                  <p className="text-sm font-semibold text-gray-500 flex items-center gap-2 pt-2 border-t">
+            {/* LINHA DIVISÓRIA (se houver fixadas e normais na mesma página) */}
+            {currentPage.pinned.length > 0 && currentPage.normal.length > 0 && (
+              <div className="border-t border-gray-700 my-4" />
+            )}
+
+            {/* NOTAS NORMAIS DA PÁGINA ATUAL */}
+            {currentPage.normal.length > 0 && (
+              <div className="space-y-3">
+                {currentPage.pinned.length > 0 && (
+                  <p className="text-sm font-semibold text-gray-500 flex items-center gap-2">
                     <span>📄</span> Outras
                   </p>
                 )}
                 <div className="space-y-3">
-                  {paginatedNotes.map((note) => (
+                  {currentPage.normal.map((note) => (
                     <NotesItem
                       key={note.id}
                       id={note.id}
@@ -162,34 +227,46 @@ export default function Notes() {
               </div>
             )}
 
-            {/* PAGINAÇÃO (FORA DO CARD DAS NOTAS) */}
+            {/* PAGINAÇÃO */}
             {totalPages > 1 && (
-              <div className="pt-4 border-t">
+              <div className="pt-4 border-t border-gray-700">
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
                       <PaginationPrevious
                         onClick={() => setPage((p) => Math.max(p - 1, 1))}
-                        className={page === 1 ? "pointer-events-none text-white font-bold" : "cursor-pointer text-white hover:bg-white/10"}
+                        className={`
+                          ${page === 1 
+                            ? 'pointer-events-none opacity-50' 
+                            : 'cursor-pointer hover:bg-white/10'
+                          }
+                          text-white font-bold
+                        `}
                       />
                     </PaginationItem>
 
                     {Array.from({ length: totalPages }).map((_, index) => {
                       const pageNumber = index + 1;
                       const isActive = page === pageNumber;
+                      const pageHasPinned = pages[index]?.pinned.length > 0;
 
                       return (
                         <PaginationItem key={pageNumber}>
                           <PaginationLink
                             isActive={isActive}
                             onClick={() => setPage(pageNumber)}
-                            className={
-                              isActive
-                                ? "bg-green-600 text-white hover:bg-green-700 border-green-600"
-                                : "hover:bg-green-100 hover:text-green-700 cursor-pointer text-white"
-                            }
+                            className={`
+                              cursor-pointer relative
+                              ${isActive
+                                ? 'bg-green-600 text-white hover:bg-green-700 border-green-600'
+                                : 'text-white hover:bg-white/10'
+                              }
+                            `}
                           >
                             {pageNumber}
+                            {pageHasPinned && !isActive && (
+                              <span className="absolute -top-1 -right-1 w-2 h-2 bg-emerald-500 rounded-full" />
+                            )}
                           </PaginationLink>
                         </PaginationItem>
                       );
@@ -198,7 +275,13 @@ export default function Notes() {
                     <PaginationItem>
                       <PaginationNext
                         onClick={() => setPage((p) => Math.min(p + 1, totalPages))}
-                        className={page === totalPages ? "pointer-events-none text-white font-bold" : "cursor-pointer text-white hover:bg-white/10"}
+                        className={`
+                          ${page === totalPages 
+                            ? 'pointer-events-none opacity-50' 
+                            : 'cursor-pointer hover:bg-white/10'
+                          }
+                          text-white font-bold
+                        `}
                       />
                     </PaginationItem>
                   </PaginationContent>

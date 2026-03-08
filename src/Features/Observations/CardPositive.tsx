@@ -138,17 +138,18 @@ export default function CardPositive() {
                       type="category"
                       tickLine={false}
                       axisLine={false}
-                      tick={{ fill: "#ffffff", fontSize: 12 }}
+                      tick={{ fill: "#ffffff", fontSize: 10 }}
+                      style={{ fill: "#fff" }}
                     />
                     <XAxis
                       type="number"
                       tick={{ fill: "#ffffff", fontSize: 12 }}
+                      style={{ fill: "#fff" }}
                       axisLine={{ stroke: "#ffffff" }}
                       tickLine={{ stroke: "#ffffff" }}
                       tickFormatter={(value) => formatCurrency(value)}
                     />
                     
-                    {/* 🟢 TOOLTIP ADICIONADO */}
                     <Tooltip 
                       content={<CustomTooltip />}
                       cursor={{ fill: 'rgba(255, 255, 255, 0.1)' }}

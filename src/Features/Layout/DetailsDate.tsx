@@ -8,26 +8,55 @@ import {
   getToday,
   isCurrentMonth,
   getCurrentMonth,
+  compareMonths, // 🟢 Use compareMonths em vez de isBefore
 } from "../../Utils/Date";
 
 export default function DetailsDate() {
   const { currentMonth, setCurrentMonth } = useFinanceStore();
+  const transactions = useFinanceStore((state) => state.transactions);
+  const notes = useFinanceStore((state) => state.notes);
 
   const realCurrentMonth = getCurrentMonth();
   const showCurrentButton = currentMonth !== realCurrentMonth;
-  
 
   const monthLabel = isCurrentMonth(currentMonth)
     ? "Mês atual"
     : "Mês anterior";
 
   function hasDataInMonth(month: string) {
-    const { transactions, notes } = useFinanceStore.getState();
-
-    const hasTransaction = transactions.some((t) => t.month === month);
+    const hasTransaction = transactions.some((t) => {
+      if (t.fixed) {
+        return !t.hiddenMonths?.includes(month);
+      }
+      return t.month === month;
+    });
+    
     const hasNotes = notes.some((n) => n.month === month);
 
     return hasTransaction || hasNotes;
+  }
+
+  // 🟢 Encontrar o mês mais antigo com dados
+  function getOldestMonthWithData() {
+    const monthsWithData = new Set<string>();
+    
+    transactions.forEach(t => {
+      if (t.fixed) {
+        monthsWithData.add(t.month);
+        if (t.monthlyValues) {
+          Object.keys(t.monthlyValues).forEach(m => monthsWithData.add(m));
+        }
+      } else {
+        monthsWithData.add(t.month);
+      }
+    });
+    
+    notes.forEach(n => monthsWithData.add(n.month));
+    
+    if (monthsWithData.size === 0) return null;
+    
+    // 🟢 CORRIGIDO: Usar compareMonths que retorna número
+    return Array.from(monthsWithData).sort(compareMonths)[0];
   }
 
   function goToCurrentMonth() {
@@ -36,27 +65,27 @@ export default function DetailsDate() {
 
   function handleNext() {
     const next = changeMonth(currentMonth, 1);
-
-    console.log("current:", currentMonth);
-    console.log("next:", next);
-
-    setCurrentMonth(next);
+    // 🟢 Usar compareMonths para comparações
+    if (compareMonths(next, realCurrentMonth) <= 0) {
+      setCurrentMonth(next);
+    }
   }
 
   function handlePrev() {
-    let prev = changeMonth(currentMonth, -1);
-
-    let attempts = 0;
-
-    while (!hasDataInMonth(prev) && attempts < 24) {
-      prev = changeMonth(prev, -1);
-      attempts++;
-    }
-
+    const prev = changeMonth(currentMonth, -1);
+    
     if (hasDataInMonth(prev)) {
       setCurrentMonth(prev);
     }
   }
+
+  const previousMonthHasData = hasDataInMonth(changeMonth(currentMonth, -1));
+  const oldestMonth = getOldestMonthWithData();
+  
+  // 🟢 Usar compareMonths para comparações
+  const canGoBack = oldestMonth ? compareMonths(oldestMonth, currentMonth) < 0 : false;
+  const canGoForward = compareMonths(currentMonth, realCurrentMonth) < 0;
+
   return (
     <div className="mx-44 mt-6">
       <div className="flex justify-between items-center">
@@ -69,10 +98,16 @@ export default function DetailsDate() {
             <p className="text-base font-medium text-gray-300">{monthLabel}</p>
           </section>
         </section>
+        
         <section className="flex items-center gap-2">
           <Button
             onClick={handlePrev}
-            className="bg-green-800 text-white border border-emerald-600 hover:bg-green-900"
+            disabled={!previousMonthHasData || !canGoBack}
+            className={`
+              bg-green-800 text-white border border-emerald-600 
+              hover:bg-green-900
+              ${(!previousMonthHasData || !canGoBack) && 'opacity-50 cursor-not-allowed'}
+            `}
           >
             <IoChevronBack />
           </Button>
@@ -87,12 +122,17 @@ export default function DetailsDate() {
           )}
 
           <Button
-            disabled={isCurrentMonth(currentMonth)}
+            disabled={!canGoForward}
             onClick={handleNext}
-            className="bg-green-800 text-white border border-emerald-600 hover:bg-green-900 hover:text-white"
+            className={`
+              bg-green-800 text-white border border-emerald-600 
+              hover:bg-green-900
+              ${!canGoForward && 'opacity-50 cursor-not-allowed'}
+            `}
           >
             <IoChevronForward />
           </Button>
+          
           <span className="text-lg font-semibold border border-emerald-600 px-2 py-1 bg-green-800 rounded-lg text-white">
             {getToday()}
           </span>

@@ -21,6 +21,8 @@ export interface Transaction {
   fixed?: boolean;
   month: string;
   hiddenMonths?: string[];
+  // Valores específicos por mês
+  monthlyValues?: Record<string, number>;
 }
 
 interface FinanceState {
@@ -33,6 +35,11 @@ interface FinanceState {
   addTransaction: (transaction: Transaction) => void;
   removeTransaction: (id: string) => void;
   updateTransactionAmount: (id: string, amount: number) => void;
+  updateTransactionAmountForMonth: (id: string, month: string, amount: number) => void;
+  
+  // 🟢 NOVAS FUNÇÕES
+  updateTransactionName: (id: string, name: string) => void;
+  toggleTransactionFixed: (id: string) => void;
 
   addNote: (note: Note) => void;
   removeNote: (id: string) => void;
@@ -87,6 +94,62 @@ export const useFinanceStore = create<FinanceState>()(
           ),
         })),
 
+      updateTransactionAmountForMonth: (id, month, amount) =>
+        set((state) => ({
+          transactions: state.transactions.map((t) => {
+            if (t.id !== id) return t;
+            
+            if (t.fixed) {
+              return {
+                ...t,
+                monthlyValues: {
+                  ...t.monthlyValues,
+                  [month]: amount,
+                },
+              };
+            }
+            
+            return { ...t, amount };
+          }),
+        })),
+
+      // 🟢 NOVA FUNÇÃO: Atualizar nome da transação
+      updateTransactionName: (id, name) =>
+        set((state) => ({
+          transactions: state.transactions.map((t) =>
+            t.id === id ? { ...t, name } : t,
+          ),
+        })),
+
+      // 🟢 NOVA FUNÇÃO: Fixar/Desfixar transação
+      toggleTransactionFixed: (id) =>
+        set((state) => ({
+          transactions: state.transactions.map((t) => {
+            if (t.id !== id) return t;
+            
+            // Se estiver fixando uma transação que não era fixa
+            if (!t.fixed) {
+              return {
+                ...t,
+                fixed: true,
+                // Garante que não está oculta em nenhum mês
+                hiddenMonths: [],
+                // Mantém o mês original
+                month: t.month,
+              };
+            }
+            
+            // Se estiver desfixando
+            return {
+              ...t,
+              fixed: false,
+              // Limpa dados específicos de fixa
+              hiddenMonths: undefined,
+              monthlyValues: undefined,
+            };
+          }),
+        })),
+
       addNote: (note) =>
         set((state) => ({
           notes: [...state.notes, note],
@@ -119,13 +182,22 @@ export const useFinanceStore = create<FinanceState>()(
       getTransactionsByMonth: (month) => {
         const { transactions } = get();
 
-        return transactions.filter((t) => {
-          if (t.fixed) {
-            return !t.hiddenMonths?.includes(month);
-          }
-
-          return t.month === month;
-        });
+        return transactions
+          .filter((t) => {
+            if (t.fixed) {
+              return !t.hiddenMonths?.includes(month);
+            }
+            return t.month === month;
+          })
+          .map((t) => {
+            if (t.fixed && t.monthlyValues?.[month]) {
+              return {
+                ...t,
+                amount: t.monthlyValues[month],
+              };
+            }
+            return t;
+          });
       },
 
       removeTransactionByMonth: (id, month) =>
@@ -192,7 +264,6 @@ export const useFinanceStore = create<FinanceState>()(
     }),
     {
       name: "finance-storage",
-
       partialize: (state) => ({
         transactions: state.transactions,
         notes: state.notes,
