@@ -34,8 +34,13 @@ interface FinanceState {
   addTransaction: (transaction: Transaction) => void;
   removeTransaction: (id: string) => void;
   updateTransactionAmount: (id: string, amount: number) => void;
-  updateTransactionAmountForMonth: (id: string, month: string, amount: number) => void;
-  
+  updateTransactionAmountForMonth: (
+    id: string,
+    month: string,
+    amount: number,
+  ) => void;
+  getHiddenTransactionsByMonth: (month: string) => Transaction[];
+  restoreTransactionByMonth: (id: string, month: string) => void;
 
   updateTransactionName: (id: string, name: string) => void;
   toggleTransactionFixed: (id: string) => void;
@@ -97,7 +102,7 @@ export const useFinanceStore = create<FinanceState>()(
         set((state) => ({
           transactions: state.transactions.map((t) => {
             if (t.id !== id) return t;
-            
+
             if (t.fixed) {
               return {
                 ...t,
@@ -107,11 +112,10 @@ export const useFinanceStore = create<FinanceState>()(
                 },
               };
             }
-            
+
             return { ...t, amount };
           }),
         })),
-
 
       updateTransactionName: (id, name) =>
         set((state) => ({
@@ -120,12 +124,11 @@ export const useFinanceStore = create<FinanceState>()(
           ),
         })),
 
-      
       toggleTransactionFixed: (id) =>
         set((state) => ({
           transactions: state.transactions.map((t) => {
             if (t.id !== id) return t;
-            
+
             // Se estiver fixando uma transação que não era fixa
             if (!t.fixed) {
               return {
@@ -137,7 +140,7 @@ export const useFinanceStore = create<FinanceState>()(
                 month: t.month,
               };
             }
-            
+
             // Se estiver desfixando
             return {
               ...t,
@@ -168,9 +171,7 @@ export const useFinanceStore = create<FinanceState>()(
 
       updateNote: (id, content) =>
         set((state) => ({
-          notes: state.notes.map((n) =>
-            n.id === id ? { ...n, content } : n,
-          ),
+          notes: state.notes.map((n) => (n.id === id ? { ...n, content } : n)),
         })),
 
       getNotesByMonth: (month) => {
@@ -241,6 +242,30 @@ export const useFinanceStore = create<FinanceState>()(
         };
       },
 
+      getHiddenTransactionsByMonth: (month) => {
+        const { transactions } = get();
+
+        return transactions.filter(
+          (t) => t.fixed && t.hiddenMonths?.includes(month),
+        );
+      },
+
+      restoreTransactionByMonth: (id, month) =>
+        set((state) => ({
+          transactions: state.transactions.map((t) => {
+            if (t.id !== id) return t;
+
+            if (t.fixed) {
+              return {
+                ...t,
+                hiddenMonths: t.hiddenMonths?.filter((m) => m !== month),
+              };
+            }
+
+            return t;
+          }),
+        })),
+
       getExpensePercentage: () => {
         const { totalExpense, totalIncome } = get().getTotals();
 
@@ -251,6 +276,16 @@ export const useFinanceStore = create<FinanceState>()(
 
       getDistribuition: () => {
         const { balance } = get().getTotals();
+
+        if (balance <= 0) {
+          return {
+            emergency: 0,
+            invest: 0,
+            leisure: 0,
+            education: 0,
+            costs: 0,
+          };
+        }
 
         return {
           emergency: balance * 0.3,

@@ -16,17 +16,29 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
   const removeTransactionByMonth = useFinanceStore(
     (state) => state.removeTransactionByMonth,
   );
+
   const updateTransactionAmountForMonth = useFinanceStore(
     (state) => state.updateTransactionAmountForMonth,
   );
+
   const updateTransactionName = useFinanceStore(
     (state) => state.updateTransactionName,
   );
+
   const toggleTransactionFixed = useFinanceStore(
     (state) => state.toggleTransactionFixed,
   );
 
   const currentMonth = useFinanceStore((state) => state.currentMonth);
+  const transactions = useFinanceStore((state) => state.transactions);
+
+  const hiddenTransactions = transactions.filter(
+    (t) => t.fixed && t.hiddenMonths?.includes(currentMonth),
+  );
+
+  const restoreTransaction = useFinanceStore(
+    (state) => state.restoreTransactionByMonth,
+  );
 
   const [editingAmount, setEditingAmount] = useState<string | null>(null);
   const [tempAmount, setTempAmount] = useState("");
@@ -48,6 +60,7 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
       text: "Valor atualizado com sucesso",
     });
   };
+
   const handleRemove = (expenseId: string) => {
     const expense = expenses.find((e) => e.id === expenseId);
 
@@ -92,14 +105,15 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
       text: expense?.fixed ? "Despesa desfixada" : "Despesa fixada",
     });
   };
+
   return (
     <div className="w-full grid grid-rows gap-3">
+      {/* DESPESAS NORMAIS */}
       {sortedExpenses.map((expense) => (
         <Card
           key={expense.id}
           className="hover:bg-slate-800/20 bg-slate-900 border-slate-600 w-full relative"
         >
-          {/* Ícone de fixar - aparece apenas se for despesa fixa */}
           {expense.fixed && (
             <div className="absolute -top-4 -right-4 z-10">
               <div className="bg-green-900 border border-emerald-600 rounded-full p-1.5 shadow-md">
@@ -108,9 +122,8 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
             </div>
           )}
 
-          {/* Grid com 3 colunas: círculo, texto, valor+botão */}
           <div className="grid grid-cols-[auto,1fr,auto] items-center gap-3 p-4 w-full">
-            {/* COLUNA 1: Círculo */}
+            {/* CATEGORIA */}
             <span
               className="h-3 w-3 rounded-full flex-shrink-0"
               style={{
@@ -118,10 +131,9 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
               }}
             />
 
-            {/* COLUNA 2: Texto (título + categoria + nota) */}
+            {/* TEXTO */}
             <div className="flex flex-col min-w-0">
               <div className="flex items-center flex-wrap gap-1.5">
-                {/* NOME EDITÁVEL */}
                 {editingName === expense.id ? (
                   <input
                     type="text"
@@ -147,32 +159,25 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
                     {expense.name}
                   </h2>
                 )}
-                <span className="text-sm font-medium font-sans border bg-gray-200 px-3 py-1 rounded-full text-gray-600 whitespace-nowrap flex-shrink-0">
+
+                <span className="text-sm font-medium border bg-gray-200 px-3 py-1 rounded-full text-gray-600">
                   {expense.category}
                 </span>
               </div>
 
               {expense.notes && (
-                <p className="text-base font-medium text-gray-300 mt-1 flex items-center gap-2 cursor-help w-full overflow-hidden">
-                  <IoDocumentTextOutline
-                    size={16}
-                    className="flex-shrink-0 text-white font-bold mb-0.5 "
-                  />
-                  <span title={expense.notes} className="truncate block">
-                    {expense.notes}
-                  </span>
+                <p className="text-base font-medium text-gray-300 mt-1 flex items-center gap-2">
+                  <IoDocumentTextOutline size={16} />
+                  <span className="truncate">{expense.notes}</span>
                 </p>
               )}
             </div>
 
-            {/* COLUNA 3: Valor + botões */}
-            <div className="flex items-center gap-4 flex-shrink-0 justify-self-end">
-              {/* VALOR EDITÁVEL */}
+            {/* VALOR + BOTÕES */}
+            <div className="flex items-center gap-4">
               {editingAmount === expense.id ? (
-                <div className="flex items-center border-2 text-white bg-slate-900 border-emerald-600 rounded-lg px-3 py-2 w-fit">
-                  <span className="text-base font-bold text-gray-300 mr-1">
-                    R$
-                  </span>
+                <div className="flex items-center border-2 text-white bg-slate-900 border-emerald-600 rounded-lg px-3 py-2">
+                  <span className="mr-1">R$</span>
                   <input
                     type="number"
                     value={tempAmount}
@@ -182,13 +187,7 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
                       handleUpdateAmount(expense.id, Number(tempAmount) || 0);
                       setEditingAmount(null);
                     }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleUpdateAmount(expense.id, Number(tempAmount) || 0);
-                        setEditingAmount(null);
-                      }
-                    }}
-                    className="bg-transparent outline-none w-24 text-base font-bold"
+                    className="bg-transparent outline-none w-24"
                   />
                 </div>
               ) : (
@@ -197,60 +196,92 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
                     setEditingAmount(expense.id);
                     setTempAmount(String(expense.amount ?? ""));
                   }}
-                  className="font-bold text-lg text-white hover:text-green-600 cursor-pointer transition-all duration-300 whitespace-nowrap"
+                  className="font-bold text-lg text-white cursor-pointer"
                 >
                   R${" "}
                   {(expense.amount ?? 0).toLocaleString("pt-BR", {
-                    maximumFractionDigits: 2,
                     minimumFractionDigits: 2,
                   })}
                 </span>
               )}
 
-              {/* 🟢 BOTÃO FIXAR/DESFIXAR - aparece sempre, com comportamento diferente */}
+              {/* FIXAR */}
               <button
                 onClick={() => handleToggleFixed(expense.id)}
-                className={`
-                  group p-2 rounded-lg border flex-shrink-0
-                  transition-all duration-300
-                  ${
-                    expense.fixed
-                      ? "bg-emerald-900 border-emerald-400 hover:bg-emerald-800"
-                      : "hover:bg-emerald-900 hover:border-emerald-400"
-                  }
-                `}
-                title={expense.fixed ? "Desfixar despesa" : "Fixar despesa"}
+                className={`p-2 rounded-lg border ${
+                  expense.fixed
+                    ? "bg-emerald-900 border-emerald-400"
+                    : "hover:bg-emerald-900 hover:border-emerald-400"
+                }`}
               >
                 <PiPushPinDuotone
-                  className={`
-                    transition-all duration-300
-                    ${
-                      expense.fixed
-                        ? "opacity-100 scale-100 text-emerald-400"
-                        : "opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 text-white"
-                    }
-                  `}
-                  size={16}
+                  className={
+                    expense.fixed
+                      ? "text-emerald-400"
+                      : "opacity-0 group-hover:opacity-100 text-white"
+                  }
                 />
               </button>
 
-              {/* BOTÃO LIXEIRA */}
+              {/* REMOVER */}
               <button
                 onClick={() => handleRemove(expense.id)}
                 disabled={expense.fixed}
-                className={`group p-2 rounded-lg border flex-shrink-0
-  ${
-    expense.fixed
-      ? "opacity-30 cursor-not-allowed"
-      : "hover:bg-red-900 hover:border-red-400"
-  }`}
+                className={`p-2 rounded-lg border ${
+                  expense.fixed
+                    ? "opacity-30 cursor-not-allowed"
+                    : "hover:bg-red-900 hover:border-red-400"
+                }`}
               >
-                <FaTrash className="transition-all duration-300 text-white" />
+                <FaTrash className="text-white" />
               </button>
             </div>
           </div>
         </Card>
       ))}
+
+      {/* TRANSAÇÕES OCULTAS */}
+      {hiddenTransactions.length > 0 && (
+        <div className="mt-6 space-y-3">
+          <h2 className="text-gray-400 font-semibold text-sm uppercase">
+            Transações ocultas neste mês
+          </h2>
+
+          {hiddenTransactions.map((expense) => (
+            <Card
+              key={expense.id}
+              className="bg-slate-900 border-slate-700 opacity-70"
+            >
+              <div className="flex justify-between items-center p-4">
+                <div>
+                  <h2 className="text-white font-bold">{expense.name}</h2>
+
+                  <p className="text-gray-400 text-sm">
+                    R${" "}
+                    {(expense.amount ?? 0).toLocaleString("pt-BR", {
+                      minimumFractionDigits: 2,
+                    })}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => {
+                    restoreTransaction(expense.id, currentMonth);
+
+                    showToast({
+                      type: "success",
+                      text: "Despesa restaurada",
+                    });
+                  }}
+                  className="text-green-400 hover:text-green-300 font-semibold"
+                >
+                  Restaurar
+                </button>
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
