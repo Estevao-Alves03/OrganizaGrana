@@ -8,3 +8,4 @@ export type Category =
 | "Serviços"
 | "Outros"
 | "Renda"
+| "Crédito/Parcelado"

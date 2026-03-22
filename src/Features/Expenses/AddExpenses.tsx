@@ -1,20 +1,35 @@
 import { useEffect, useState } from "react";
 // componentes
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,} from "../../components/ui/select";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle,} from "../../components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../components/ui/card";
 import { Checkbox } from "../../components/ui/checkbox";
 import { Textarea } from "../../components/ui/textarea";
 import { Button } from "../../components/ui/button";
+import { Switch } from "../../components/ui/switch";
 // zustand
-import type { Transaction } from "../../Store/FinanceStore"; 
+import type { Transaction } from "../../Store/FinanceStore";
 import { useFinanceStore } from "../../Store/FinanceStore";
 // types
 import type { Category } from "../../Types/Category";
 // react icons
 import { IoCloseOutline } from "react-icons/io5";
+import { FaRegCreditCard } from "react-icons/fa6";
+
 // paginas
 import { showToast } from "../Layout/ToastContainer";
-
 
 interface AddExpensesProps {
   onCloseCard: () => void;
@@ -24,6 +39,7 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
   const addTransaction = useFinanceStore((state) => state.addTransaction);
   const [category, setCategory] = useState<Category>("Moradia");
   const [isFixed, setIsFixed] = useState(false);
+  const [active, setActive] = useState(false);
   const currentMonth = new Date().toISOString().slice(0, 7);
 
   useEffect(() => {
@@ -51,7 +67,10 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
 
     addTransaction(transaction);
 
-    showToast({type: "success", text: `Depesa ${transaction.name} adicionada com sucesso!`})
+    showToast({
+      type: "success",
+      text: `Depesa ${transaction.name} adicionada com sucesso!`,
+    });
 
     onCloseCard();
   }
@@ -86,21 +105,87 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                 name="nameExpense"
                 required
                 placeholder="Ex: Aluguel, Internet..."
-                className="border px-3 py-2 rounded-xl placeholder:text-base focus:outline-none focus:ring-2 focus:ring-green-600 font-semibold bg-slate-900 text-white"
+                className="border px-3 py-2.5 rounded-xl placeholder:text-base focus:outline-none focus:ring-2 focus:ring-green-600 font-semibold bg-slate-900 text-white"
               />
             </div>
+
+            {/* card de pagamento no crédito */}
+            <div className="border rounded-xl px-3 py-2 mt-2 flex items-center justify-between">
+              <section className="flex items-center gap-3">
+                <FaRegCreditCard className="text-zinc-400 text-2xl" />
+                <div>
+                  <h1 className="text-white font-bold text-base">
+                    Compra parcelada no crédito
+                  </h1>
+                  <p className="text-zinc-400 font-medium text-sm">
+                    Controle suas parcelas com contagem automática
+                  </p>
+                </div>
+              </section>
+              <Switch
+                checked={active}
+                onCheckedChange={setActive}
+                className="data-[state=unchecked]:bg-zinc-400 data-[state=checked]:bg-green-500"
+              />
+            </div>
+
+            {active && (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-start justify-between">
+                  <section className="flex flex-col">
+                    <h3 className="text-lg font-bold text-white">
+                      Valor total da compra
+                    </h3>
+
+                    <div className="relative">
+                      <span className="absolute left-3 top-1/2 mt-1 -translate-y-1/2 text-gray-400 font-bold">
+                        R$
+                      </span>
+                      <input
+                        type="text"
+                        name="price"
+                        inputMode="decimal"
+                        placeholder="00,00"
+                        className="border rounded-lg py-2 mt-2 bg-slate-900 text-white pl-9 font-bold w-[280px] text-lg"
+                      />
+                    </div>
+                  </section>
+
+                  <section>
+                    <h3 className="text-lg font-bold text-white">
+                      Total de parcelas
+                    </h3>
+                    <input
+                      type="number"
+                      defaultValue={1}
+                      min={1}
+                      max={60}
+                      className="border rounded-lg py-2 mt-2 bg-slate-900 text-white pl-3 pr-4 w-[180px] text-lg"
+                    />
+                  </section>
+                </div>
+
+                {/* 👇 Agora ocupa largura total */}
+                <span className="text-md text-gray-400 font-medium ">
+                  <strong className="text-green-600">Observação:</strong> O
+                  valor da parcela será calculado automáticamente
+                </span>
+              </div>
+            )}
 
             {/* Valor */}
             <div className="flex flex-col gap-2">
               <label className="font-bold font-sans text-lg text-white">
-                Valor deste mês (R$)
-               <span className="text-sm text-gray-300 ml-1 font-medium">
-                  (Pode ser alterado depois)
-                </span>
+                {active ? "Valor da parcela (R$)" : "Valor deste mês (R$)"}
+                {active ? null : (
+                  <span className="text-sm text-gray-300 ml-1 font-medium">
+                    (Pode ser alterado depois)
+                  </span>
+                )}
               </label>
 
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 font-bold">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold">
                   R$
                 </span>
 
@@ -111,84 +196,96 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                   placeholder="00,00"
                   className="appearance-none border border-zinc-300 rounded-lg 
                   pl-9 pr-4 py-2 w-full
-                  placeholder:text-gray-400 text-lg font-semibold
-                  focus:outline-none focus:ring-2 focus:ring-green-600 placeholder:text-base bg-slate-900 text-white"
+                  placeholder:text-gray-400 text-lg font-bold
+                  focus:outline-none focus:ring-2 focus:ring-green-600 placeholder:text-lg bg-slate-900 text-white"
                 />
               </div>
             </div>
 
-            {/* Categoria */}
-            <div className="flex flex-col gap-2">
-              <label className="font-bold font-sans text-base text-white">Categoria</label>
+            {active ? null : (
+              <>
+                {/* Categoria */}
+                <div className="flex flex-col gap-2">
+                  <label className="font-bold font-sans text-lg text-white">
+                    Categoria
+                  </label>
 
-              <Select
-                value={category}
-                onValueChange={(value: string) =>
-                  setCategory(value as Category)
-                }
-              >
-                <SelectTrigger className="w-[250px] font-medium text-md text-white">
-                  <SelectValue />
-                </SelectTrigger>
+                  <Select
+                    value={category}
+                    onValueChange={(value: string) =>
+                      setCategory(value as Category)
+                    }
+                  >
+                    <SelectTrigger className="w-[250px] font-medium text-md h-[45px] text-white">
+                      <SelectValue />
+                    </SelectTrigger>
 
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem
-                      value="Moradia"
-                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
-                    >
-                      Moradia
-                    </SelectItem>
-                    <SelectItem
-                      value="Transporte"
-                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
-                    >
-                      Transporte
-                    </SelectItem>
-                    <SelectItem
-                      value="Alimentação"
-                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
-                    >
-                      Alimentação
-                    </SelectItem>
-                    <SelectItem
-                      value="Saúde"
-                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
-                    >
-                      Saúde
-                    </SelectItem>
-                    <SelectItem
-                      value="Educação"
-                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
-                    >
-                      Educação
-                    </SelectItem>
-                    <SelectItem
-                      value="Lazer"
-                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
-                    >
-                      Lazer
-                    </SelectItem>
-                    <SelectItem
-                      value="Serviços"
-                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
-                    >
-                      Serviços
-                    </SelectItem>
-                    <SelectItem
-                      value="Outros"
-                      className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
-                    >
-                      Outros
-                    </SelectItem>
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-            </div>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem
+                          value="Moradia"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Moradia
+                        </SelectItem>
+                        <SelectItem
+                          value="Transporte"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Transporte
+                        </SelectItem>
+                        <SelectItem
+                          value="Alimentação"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Alimentação
+                        </SelectItem>
+                        <SelectItem
+                          value="Saúde"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Saúde
+                        </SelectItem>
+                        <SelectItem
+                          value="Educação"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Educação
+                        </SelectItem>
+                        <SelectItem
+                          value="Lazer"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Lazer
+                        </SelectItem>
+                        <SelectItem
+                          value="Serviços"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Serviços
+                        </SelectItem>
+                        {/* <SelectItem
+                          value="Crédito/Parcelado"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Crédito/Parcelado
+                        </SelectItem> */}
+                        <SelectItem
+                          value="Outros"
+                          className="cursor-pointer data-[highlighted]:bg-green-600 data-[highlighted]:text-white font-bold text-sm"
+                        >
+                          Outros
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
+            )}
 
             {/* Observação */}
             <div className="flex flex-col gap-2">
-              <label className="font-bold font-sans text-base text-white">
+              <label className="font-bold font-sans text-lg text-white">
                 Observação
                 <span className="text-sm text-gray-300 ml-1 font-medium">
                   (opcional)
@@ -205,19 +302,23 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
               />
             </div>
 
-            <div className="flex items-center gap-3">
-              <h1 className="font-bold font-sans text-base text-white">
-                É uma despesa fixa?
-              </h1>
-              <Checkbox
-                checked={isFixed}
-                onCheckedChange={(checked) => setIsFixed(Boolean(checked))}
-                className="h-[20px] w-[20px] border-gray-300
+            {active ? null : (
+              <>
+                <div className="flex items-center gap-3">
+                  <h1 className="font-bold font-sans text-lg text-white">
+                    É uma despesa fixa?
+                  </h1>
+                  <Checkbox
+                    checked={isFixed}
+                    onCheckedChange={(checked) => setIsFixed(Boolean(checked))}
+                    className="h-[20px] w-[20px] border-gray-300
             data-[state=checked]:bg-green-600
             data-[state=checked]:border-green-600
             data-[state=checked]:text-white"
-              />
-            </div>
+                  />
+                </div>
+              </>
+            )}
 
             {/* Botões */}
             <div className="flex items-center justify-end gap-3 mt-3">

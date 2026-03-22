@@ -10,4 +10,5 @@ export const categoryColors: Record<Category, string> = {
   Serviços: "#EC4899",
   Outros: "#06B6D4",
   Renda: "#07eb35",
+ "Crédito/Parcelado": "#b134eb",
 };

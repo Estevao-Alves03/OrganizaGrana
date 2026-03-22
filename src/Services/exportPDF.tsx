@@ -39,7 +39,7 @@ export function exportPDF(currentMonth: string) {
 
   doc.setTextColor(255, 255, 255);
   doc.setFontSize(18);
-  doc.text("MEUS GASTOS ORGANIZADOS", 14, 18);
+  doc.text("MEU BOLSO", 14, 18);
 
   doc.setTextColor(0, 0, 0);
 
