@@ -29,7 +29,7 @@ import { IoCloseOutline } from "react-icons/io5";
 import { FaRegCreditCard } from "react-icons/fa6";
 
 // paginas
-import { showToast } from "../Layout/ToastContainer";
+import { showToast } from "../Warnings/ToastContainer";
 
 interface AddExpensesProps {
   onCloseCard: () => void;
@@ -143,7 +143,8 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                       </span>
                       <input
                         type="text"
-                        name="price"
+                        name="totalPrice"
+                        required
                         inputMode="decimal"
                         placeholder="00,00"
                         className="border rounded-lg py-2 mt-2 bg-slate-900 text-white pl-9 font-bold w-[280px] text-lg"
@@ -157,10 +158,11 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                     </h3>
                     <input
                       type="number"
+                      name="installments"
                       defaultValue={1}
                       min={1}
                       max={60}
-                      className="border rounded-lg py-2 mt-2 bg-slate-900 text-white pl-3 pr-4 w-[180px] text-lg"
+                      className="border rounded-lg py-2 mt-2 bg-slate-900 text-white pl-3 pr-4 w-[180px] text-lg "
                     />
                   </section>
                 </div>
@@ -192,6 +194,8 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                 <input
                   type="text"
                   name="price"
+                  required
+                  disabled={active}
                   inputMode="decimal"
                   placeholder="00,00"
                   className="appearance-none border border-zinc-300 rounded-lg 

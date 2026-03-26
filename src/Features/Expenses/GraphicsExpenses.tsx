@@ -41,6 +41,8 @@ export default function GraphicsExpenses() {
             fill: categoryColors[expense.category],
           };
         }
+        console.log(expense.category, categoryColors[expense.category]);
+        
 
         acc[expense.category].value += expense.amount;
 

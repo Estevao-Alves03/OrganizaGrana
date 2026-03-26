@@ -1,11 +1,11 @@
 import SummaryCard from "./Features/Dashboard/SummaryCard";
 import Expenses from "./Features/Expenses/Expenses";
 import Incomes from "./Features/Income/Incomes";
-import DetailsDate from "./Features/Layout/DetailsDate";
-import Navbar from "./Features/Layout/Navbar";
+import DetailsDate from "./Features/Navbar/DetailsDate";
+import Navbar from "./Features/Navbar/Navbar";
 import Notes from "./Features/Observations/Notes";
 import MoneyCard from "./Features/Observations/MoneyCard";
-import { ToastContainer } from "./Features/Layout/ToastContainer";
+import { ToastContainer } from "./Features/Warnings/ToastContainer";
 
 export default function App() {
   return (

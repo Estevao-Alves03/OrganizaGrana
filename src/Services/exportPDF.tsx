@@ -4,28 +4,14 @@ import { formatMonth, getToday } from "../Utils/Date";
 import { useFinanceStore } from "../Store/FinanceStore";
 
 export function exportPDF(currentMonth: string) {
-  console.log("========== INICIANDO PDF ==========");
-  console.log("1. Mês recebido:", currentMonth);
-
   const doc = new jsPDF();
-
   const store = useFinanceStore.getState();
-  console.log("2. Store obtida");
-
-  store.setCurrentMonth(currentMonth);
-  console.log("3. Mês atual setado para:", store.currentMonth);
 
   const monthTransactions = store.getTransactionsByMonth(currentMonth);
-  console.log("4. Transações do mês:", monthTransactions.length);
-
   const totals = store.getTotals();
-  console.log("5. Totais calculados:", totals);
-
   const distribution = store.getDistribuition();
-  console.log("6. Distribuição calculada:", distribution);
 
   const { emergency, invest, leisure, education, costs } = distribution;
-  console.log("7. Valores extraídos:", { emergency, invest, leisure, education, costs });
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", {
@@ -33,121 +19,130 @@ export function exportPDF(currentMonth: string) {
       currency: "BRL",
     }).format(value);
 
-  // ========== HEADER ==========
+  // ================= HEADER =================
   doc.setFillColor(16, 185, 129);
-  doc.rect(0, 0, 210, 30, "F");
+  doc.rect(0, 0, 210, 35, "F");
 
   doc.setTextColor(255, 255, 255);
-  doc.setFontSize(18);
-  doc.text("MEU BOLSO", 14, 18);
+  doc.setFontSize(20);
+  doc.setFont("helvetica", "bold");
+  doc.text("MEU BOLSO", 14, 20);
+
+  doc.setFont("helvetica", "normal"); // reset
+  doc.setFontSize(10);
+  doc.text(`Relatório - ${formatMonth(currentMonth)}`, 14, 28);
 
   doc.setTextColor(0, 0, 0);
 
-  // ========== TÍTULO ==========
-  doc.setFontSize(16);
-  doc.text("Relatório Financeiro", 14, 45);
+  // ================= CARDS =================
+  const drawCard = (label: string, value: string, x: number) => {
+    doc.setFillColor(240, 253, 244);
+    doc.roundedRect(x, 45, 55, 22, 3, 3, "F");
 
-  doc.setFontSize(11);
-  doc.text(`Mês: ${formatMonth(currentMonth)}`, 14, 52);
-  doc.text(`Gerado em: ${getToday()}`, 14, 58);
+    doc.setFontSize(9);
+    doc.setTextColor(100);
+    doc.text(label, x + 3, 52);
 
-  // ========== RESUMO ==========
-  doc.setFontSize(13);
-  doc.text("Resumo financeiro", 14, 75);
+    doc.setFontSize(12);
+    doc.setTextColor(0);
+    doc.text(value, x + 3, 60);
+  };
 
-  doc.setFontSize(11);
-  doc.text(`Receitas: ${formatCurrency(totals.totalIncome)}`, 14, 85);
-  doc.text(`Despesas: ${formatCurrency(totals.totalExpense)}`, 14, 92);
-  doc.text(`Saldo: ${formatCurrency(totals.balance)}`, 14, 99);
+  drawCard("Receitas", formatCurrency(totals.totalIncome), 14);
+  drawCard("Despesas", formatCurrency(totals.totalExpense), 74);
+  drawCard("Saldo", formatCurrency(totals.balance), 134);
 
-  console.log("8. Saldo para distribuição:", totals.balance);
-  console.log("9. Condição balance > 0:", totals.balance > 0);
+  let currentY = 80;
 
-  // ========== DISTRIBUIÇÃO ==========
+  // ================= DISTRIBUIÇÃO =================
   if (totals.balance > 0) {
-    console.log("10. ENTRANDO NO BLOCO DE DISTRIBUIÇÃO");
-    
     doc.setFontSize(13);
-    doc.text("Distribuição do saldo", 14, 115);
+    doc.text("Sugestão de distribuição do saldo", 14, currentY);
 
-    // Calcular percentuais
-    const totalDistribuido = emergency + invest + leisure + education + costs;
-    const percentualEmerg = ((emergency / totals.balance) * 100).toFixed(1);
-    const percentualInvest = ((invest / totals.balance) * 100).toFixed(1);
-    const percentualLeisure = ((leisure / totals.balance) * 100).toFixed(1);
-    const percentualEdu = ((education / totals.balance) * 100).toFixed(1);
-    const percentualCosts = ((costs / totals.balance) * 100).toFixed(1);
-
-    console.log("11. Percentuais calculados:", {
-      emerg: percentualEmerg,
-      invest: percentualInvest,
-      leisure: percentualLeisure,
-      edu: percentualEdu,
-      costs: percentualCosts,
-      total: ((totalDistribuido / totals.balance) * 100).toFixed(1)
-    });
-
-    console.log("12. Criando tabela de distribuição...");
+    const totalDistribuido =
+      emergency + invest + leisure + education + costs;
 
     autoTable(doc, {
-      startY: 120,
-      head: [["Categoria", "Percentual", "Valor"]],
+      startY: currentY + 5,
+      head: [["Categoria", "%", "Valor"]],
       body: [
-        ["Reserva de emergência", `${percentualEmerg}%`, formatCurrency(emergency)],
-        ["Investimentos", `${percentualInvest}%`, formatCurrency(invest)],
-        ["Lazer", `${percentualLeisure}%`, formatCurrency(leisure)],
-        ["Educação", `${percentualEdu}%`, formatCurrency(education)],
-        ["Gastos pessoais", `${percentualCosts}%`, formatCurrency(costs)],
+        ["Reserva de emergência", `${((emergency / totals.balance) * 100).toFixed(1)}%`, formatCurrency(emergency)],
+        ["Investimentos", `${((invest / totals.balance) * 100).toFixed(1)}%`, formatCurrency(invest)],
+        ["Lazer", `${((leisure / totals.balance) * 100).toFixed(1)}%`, formatCurrency(leisure)],
+        ["Educação", `${((education / totals.balance) * 100).toFixed(1)}%`, formatCurrency(education)],
+        ["Gastos pessoais", `${((costs / totals.balance) * 100).toFixed(1)}%`, formatCurrency(costs)],
       ],
       foot: [[
         "Total distribuído",
         `${((totalDistribuido / totals.balance) * 100).toFixed(1)}%`,
-        formatCurrency(totalDistribuido)
+        formatCurrency(totalDistribuido),
       ]],
+      styles: {
+        fontSize: 10,
+        cellPadding: 3,
+      },
       headStyles: {
         fillColor: [16, 185, 129],
         textColor: [255, 255, 255],
       },
       footStyles: {
-        fillColor: [240, 253, 244],
+        fillColor: [200, 230, 201],
         textColor: [0, 0, 0],
         fontStyle: "bold",
       },
+      showFoot: "last" as any,
       alternateRowStyles: {
         fillColor: [240, 253, 244],
       },
-      didDrawPage: () => {
-        console.log("13. Tabela de distribuição desenhada");
-      }
     });
 
-    const tableEndY = (doc as any).lastAutoTable?.finalY;
-    console.log("14. Posição final da tabela:", tableEndY);
-
+    currentY = (doc as any).lastAutoTable.finalY + 10;
   } else {
-    console.log("10. BALANCE <= 0 - MOSTRANDO MENSAGEM ALTERNATIVA");
     doc.setFontSize(11);
-    doc.setTextColor(100, 100, 100);
-    doc.text("Sem saldo disponível para distribuição", 14, 115);
-    doc.setTextColor(0, 0, 0);
+    doc.setTextColor(120);
+    doc.setFont("helvetica", "bold")
+    doc.text("Sem saldo disponível para distribuição", 14, currentY);
+    doc.setFont("helvetica", "bold")
+    currentY += 10;
+    doc.setTextColor(0);
   }
 
-  // ========== TRANSAÇÕES ==========
-  const tableStartY = (doc as any).lastAutoTable?.finalY 
-    ? (doc as any).lastAutoTable.finalY + 15 
-    : 140;
+  // ================= TRANSAÇÕES =================
+  doc.setFontSize(13);
+  doc.text("Transações do mês", 14, currentY);
 
-  console.log("15. Iniciando tabela de transações em Y:", tableStartY);
+  const sortedTransactions = [...monthTransactions].sort((a, b) => {
+    if (a.type === "income" && b.type === "expense") return -1;
+    if (a.type === "expense" && b.type === "income") return 1;
+    return 0;
+  });
 
-  autoTable(doc, {
-    startY: tableStartY,
-    head: [["Nome", "Categoria", "Tipo", "Valor"]],
-    body: monthTransactions.map((t) => [
+  const body: any[] = [];
+  let lastType = "";
+
+  sortedTransactions.forEach((t) => {
+    if (lastType && lastType !== t.type) {
+      body.push(["", "", "", ""]); // espaço visual
+    }
+
+    body.push([
       t.name,
       t.category,
       t.type === "income" ? "Receita" : "Despesa",
       formatCurrency(t.amount),
-    ]),
+    ]);
+
+    lastType = t.type;
+  });
+
+  autoTable(doc, {
+    startY: currentY + 5,
+    head: [["Nome", "Categoria", "Tipo", "Valor"]],
+    body,
+    styles: {
+      fontSize: 10,
+      cellPadding: 3,
+    },
     headStyles: {
       fillColor: [16, 185, 129],
       textColor: [255, 255, 255],
@@ -155,28 +150,43 @@ export function exportPDF(currentMonth: string) {
     alternateRowStyles: {
       fillColor: [240, 253, 244],
     },
+    columnStyles: {
+      3: { halign: "right" },
+    },
     didParseCell: (data) => {
-      if (data.column.index === 2 && data.cell.raw === "Despesa") {
-        data.cell.styles.textColor = [220, 38, 38];
+      const row = data.row.raw as any[];
+
+      // linha de separação
+      if (row.every((cell) => cell === "")) {
+        data.cell.styles.minCellHeight = 4;
+        data.cell.styles.fillColor = [255, 255, 255];
+        return;
+      }
+
+      // cor dos valores
+      if (data.column.index === 3) {
+        const isExpense = row[2] === "Despesa";
+
+        data.cell.styles.textColor = isExpense
+          ? [220, 38, 38]
+          : [16, 185, 129];
       }
     },
-    didDrawPage: () => {
-      console.log("16. Tabela de transações desenhada");
-    }
   });
 
-  // ========== FOOTER ==========
+  // ================= FOOTER =================
   const pageHeight = doc.internal.pageSize.height;
 
-  doc.setFontSize(9);
-  doc.text(
-    "Relatório gerado automaticamente pelo sistema",
-    14,
-    pageHeight - 10
-  );
+  doc.setDrawColor(200);
+  doc.line(14, pageHeight - 15, 196, pageHeight - 15);
 
-  console.log("17. Finalizando PDF");
-  console.log("================================");
+  doc.setFontSize(9);
+  doc.setTextColor(120);
+  doc.text(
+    `Gerado em ${getToday()} • Meu Bolso`,
+    14,
+    pageHeight - 8
+  );
 
   doc.save(`relatorio-${currentMonth}.pdf`);
 }

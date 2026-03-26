@@ -5,7 +5,7 @@
 /* Remove spinners do Chrome, Edge, Safari */
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
-  -webkit-appearance: none;
+  appearance: auto;
   margin: 0;
 }
 

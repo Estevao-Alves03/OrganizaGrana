@@ -42,6 +42,7 @@ interface FinanceState {
   getHiddenTransactionsByMonth: (month: string) => Transaction[];
   restoreTransactionByMonth: (id: string, month: string) => void;
 
+  updateTransactionCategory: (id: string, newName: Category) => void;
   updateTransactionName: (id: string, name: string) => void;
   toggleTransactionFixed: (id: string) => void;
 
@@ -123,6 +124,22 @@ export const useFinanceStore = create<FinanceState>()(
             t.id === id ? { ...t, name } : t,
           ),
         })),
+
+      updateTransactionCategory: (id: string, newCategory: Category) =>
+        set((state) => {
+          console.log("id recebido: ", id)
+          console.log("ANTES", state.transactions);
+
+          const updated = state.transactions.map((t) =>
+            t.id === id ? { ...t, category: newCategory } : t,
+          );
+
+          console.log("DEPOIS", updated);
+
+          return {
+            transactions: updated,
+          };
+        }),
 
       toggleTransactionFixed: (id) =>
         set((state) => ({
