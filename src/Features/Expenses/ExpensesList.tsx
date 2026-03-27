@@ -96,7 +96,7 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
   const sortedExpenses = [...expenses].sort((a, b) => {
     if (a.fixed && !b.fixed) return -1;
     if (!a.fixed && b.fixed) return 1;
-    return 0;
+    return (b.amount ?? 0) - (a.amount ?? 0)
   });
 
   const handleUpdateAmount = (expenseId: string, newAmount: number) => {
@@ -175,10 +175,11 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
             setExpenseToDelete(null);
           }}
           onConfirm={() => {
-            if (!expenseToDelete) return; // garante que não seja null
-            handleRemove(expenseToDelete); // aqui vai disparar o toast
+            if (!expenseToDelete) return; 
+            handleRemove(expenseToDelete); 
             setShowWarning(false);
-            setExpenseToDelete(null);
+            
+            (null);
           }}
         />
       )}
@@ -242,7 +243,11 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
                         const value = e.target.value as Category;
                         setTempCategory(value);
                         handleUpdateCategory(expense.id, value);
+                        setEditingCategory(null);
                       }}
+                      onBlur={() => {
+                        setEditingCategory(null)
+                      }} 
                       className="text-sm font-medium border bg-gray-200 pl-3 pr-6 py-1 min-w-[130px] rounded-full text-gray-600 appearance-none outline-none cursor-pointer"
                     >
                       <option value="Moradia">Moradia</option>

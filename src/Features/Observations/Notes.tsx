@@ -20,7 +20,7 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "../../components/ui/pagination";
-import { showToast } from "../Layout/ToastContainer";
+import { showToast } from "../Warnings/ToastContainer";
 
 export default function Notes() {
   const [newNote, setNewNote] = useState("");

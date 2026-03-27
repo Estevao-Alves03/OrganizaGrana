@@ -1,8 +1,51 @@
 import { useState } from "react";
 import { Card } from "../../components/ui/card";
-import { FaTrash } from "react-icons/fa";
+import { FaExclamationTriangle, FaTrash } from "react-icons/fa";
 import { useFinanceStore } from "../../Store/FinanceStore";
-import { showToast } from "../Layout/ToastContainer";
+import { showToast } from "../Warnings/ToastContainer";
+import { PiPushPinDuotone } from "react-icons/pi";
+
+interface ConfirmDeletionProps {
+  onCloseWarning: () => void;
+  onConfirm: () => void;
+}
+
+function ConfirmDeletion({ onCloseWarning, onConfirm }: ConfirmDeletionProps) {
+  return (
+    <div className="flex items-center justify-center fixed inset-0 backdrop-blur-sm bg-black/90 z-50">
+      <div className="bg-slate-900 border border-slate-600 rounded-3xl shadow-2xl w-[520px] overflow-hidden">
+        {/* Barra superior */}
+        <div className="bg-gray-700 flex items-center gap-3 px-6 py-3">
+          <FaExclamationTriangle className="text-white" size={20} />
+          <h1 className="text-white text-xl font-bold">Confirmar exclusão</h1>
+        </div>
+
+        {/* Conteúdo */}
+        <div className="p-6 flex flex-col gap-4">
+          <h2 className="text-gray-200 text-lg font-serif">
+            Este item será removido permanentemente. Realmente deseja
+            prosseguir?
+          </h2>
+
+          <div className="flex justify-end gap-4 mt-4">
+            <button
+              onClick={onCloseWarning}
+              className="bg-zinc-500 hover:bg-zinc-500 transition-colors duration-200 text-white px-4 py-2 rounded-xl font-medium shadow-md"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={onConfirm}
+              className="bg-red-700 hover:bg-red-600 transition-colors duration-200 text-white px-4 py-2 rounded-xl font-medium shadow-md"
+            >
+              Confirmar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function IncomeList() {
   const transactions = useFinanceStore((state) => state.transactions);
@@ -15,6 +58,12 @@ export default function IncomeList() {
   const updateTransactionName = useFinanceStore(
     (state) => state.updateTransactionName,
   );
+  const toggleTransactionFixed = useFinanceStore(
+    (state) => state.toggleTransactionFixed,
+  );
+
+  const [showWarning, setShowWarning] = useState(false);
+  const [incomeToDelete, setIncomeToDelete] = useState<string | null>(null);
 
   const [editingAmount, setEditingAmount] = useState<string | null>(null);
   const [tempAmount, setTempAmount] = useState("");
@@ -53,13 +102,52 @@ export default function IncomeList() {
     });
   };
 
+  const handleToggleFixed = (incomeId: string) => {
+    toggleTransactionFixed(incomeId);
+
+    const income = incomes.find((e) => e.id === incomeId);
+
+    showToast({
+      type: "success",
+      text: income?.fixed ? "Renda desfixada" : "Renda fixada",
+    });
+  };
+
+  const sortedIncomes = [...incomes].sort((a, b) => {
+    if (a.fixed && !b.fixed) return -1;
+    if (!a.fixed && b.fixed) return 1;
+    return (b.amount ?? 0) - (a.amount ?? 0);
+  });
+
   return (
     <div className="grid gap-3">
-      {incomes.map((income) => (
+      {showWarning && incomeToDelete && (
+        <ConfirmDeletion
+          onCloseWarning={() => {
+            setShowWarning(false);
+            setIncomeToDelete(null);
+          }}
+          onConfirm={() => {
+            if (!incomeToDelete) return;
+            handleRemove(incomeToDelete);
+            setShowWarning(false);
+            null;
+          }}
+        />
+      )}
+
+      {sortedIncomes.map((income) => (
         <Card
           key={income.id}
-          className="hover:bg-slate-800/20 bg-slate-900 border-slate-600"
+          className="hover:bg-slate-800/20 bg-slate-900 border-slate-600 relative"
         >
+          {income.fixed && (
+            <div className="absolute -top-4 -right-4 z-10">
+              <div className="bg-green-900 border border-emerald-600 rounded-full p-1.5 shadow-md">
+                <PiPushPinDuotone className="text-white rotate-20" size={16} />
+              </div>
+            </div>
+          )}
           <div className="flex items-center justify-between m-4">
             <section className="flex items-center gap-2">
               <span className="h-3 w-3 rounded-full bg-green-600" />
@@ -140,10 +228,35 @@ export default function IncomeList() {
               )}
 
               <button
-                onClick={() => handleRemove(income.id)}
-                className="group p-2 hover:bg-red-900 hover:border-red-400 rounded-lg border"
+                onClick={() => handleToggleFixed(income.id)}
+                className={`p-2 rounded-lg border ${
+                  income.fixed
+                    ? "bg-emerald-900 border-emerald-400"
+                    : "hover:bg-emerald-900 hover:border-emerald-400"
+                }`}
               >
-                <FaTrash className="opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 text-white" />
+                <PiPushPinDuotone
+                  className={
+                    income.fixed
+                      ? "text-emerald-400"
+                      : "opacity-0 group-hover:opacity-100 text-white"
+                  }
+                />
+              </button>
+
+              <button
+                onClick={() => {
+                  setIncomeToDelete(income.id);
+                  setShowWarning(true);
+                }}
+                disabled={income.fixed}
+                className={`p-2 rounded-lg border ${
+                  income.fixed
+                    ? "opacity-30 cursor-not-allowed"
+                    : "hover:bg-red-900 hover:border-red-400"
+                }`}
+              >
+                <FaTrash className="text-white" />
               </button>
             </section>
           </div>
