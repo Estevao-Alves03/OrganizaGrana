@@ -1,11 +1,11 @@
+import { FaArrowTrendDown, FaArrowTrendUp } from "react-icons/fa6";
+import { LuWallet } from "react-icons/lu";
 import {
   Card,
   CardDescription,
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { LuWallet } from "react-icons/lu";
-import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { useFinanceStore } from "../../Store/FinanceStore";
 
 export default function SummaryCard() {

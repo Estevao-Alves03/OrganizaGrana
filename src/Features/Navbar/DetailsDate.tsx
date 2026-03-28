@@ -1,16 +1,16 @@
-import { SlCalender } from "react-icons/sl";
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
+import { PiExportBold } from "react-icons/pi";
+import { SlCalender } from "react-icons/sl";
 import { Button } from "../../components/ui/button";
 import { useFinanceStore } from "../../Store/FinanceStore";
 import {
-  formatMonth,
   changeMonth,
+  compareMonths,
+  formatMonth,
+  getCurrentMonth,
   getToday,
   isCurrentMonth,
-  getCurrentMonth,
-  compareMonths,
 } from "../../Utils/Date";
-import { PiExportBold } from "react-icons/pi";
 
 // 🟢 IMPORT CORRETO da função do serviço
 import { exportPDF } from "../../Services/exportPDF";
@@ -94,7 +94,7 @@ export default function DetailsDate() {
   const canGoForward = compareMonths(currentMonth, realCurrentMonth) < 0;
 
   return (
-    <div className="mx-44 mt-6">
+    <div className="mx-44">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-8">
           <section className="flex items-center">
