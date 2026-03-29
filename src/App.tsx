@@ -1,38 +1,41 @@
-import { SidebarProvider, SidebarTrigger } from "./components/ui/sidebar";
-import SummaryCard from "./Features/Dashboard/SummaryCard";
-import Expenses from "./Features/Expenses/Expenses";
-import Incomes from "./Features/Income/Incomes";
-import DetailsDate from "./Features/Navbar/DetailsDate";
-import MoneyCard from "./Features/Observations/MoneyCard";
-import Notes from "./Features/Observations/Notes";
+import { Outlet, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { SidebarProvider } from "./components/ui/sidebar";
+import Dashboard from "./Features/Dashboard/Dashboard";
+import FutureProjection from "./Features/FutureProjection/DashboardFutureProjection";
+import Goals from "./Features/Goals/Goals";
+import Reports from "./Features/Reports/Reports";
 import AppSideBar from "./Features/SideBar/AppSideBar";
 import { ToastContainer } from "./Features/Warnings/ToastContainer";
 
-export default function App() {
+// Layout da pagina (Principal)
+function MainLayout() {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex">
-        <AppSideBar/>
-        <div className="flex-1 pb-20">
+      <div className="flex h-screen ">
+        <AppSideBar />
+        <div className="flex-1 pb-20 ">
           <ToastContainer />
-          <div className="px-4 mt-2">
-            <SidebarTrigger className="bg-slate-900 border-slate-600 text-slate-300"/>
-          </div>
-          {/* <Navbar /> */}
-          <DetailsDate />
-          <SummaryCard />
-          <div className="grid grid-cols-3 gap-6 mx-44 mt-6">
-            <div className="col-span-2">
-              <Incomes />
-              <Expenses />
-            </div>
-            <div className="col-span-1">
-              <MoneyCard />
-              <Notes />
-            </div>
-          </div>
+         
+          <Outlet/>
         </div>
       </div>
     </SidebarProvider>
+  );
+}
+
+// Rotas que levam para as outras paginas
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route index element={<Dashboard/>}/> 
+          <Route path="/FutureProjection" element={<FutureProjection/>} />
+          <Route path="/Comparison" element={<div className="text-white text-3xl m-10">em progresso...</div>} />
+          <Route path="/Goals" element={<Goals/>} />
+          <Route path="/Reports" element={<Reports />} />
+        </Route>
+      </Routes>
+    </Router>
   );
 }

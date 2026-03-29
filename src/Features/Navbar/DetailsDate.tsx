@@ -1,5 +1,4 @@
 import { IoChevronBack, IoChevronForward } from "react-icons/io5";
-import { PiExportBold } from "react-icons/pi";
 import { SlCalender } from "react-icons/sl";
 import { Button } from "../../components/ui/button";
 import { useFinanceStore } from "../../Store/FinanceStore";
@@ -13,7 +12,6 @@ import {
 } from "../../Utils/Date";
 
 // 🟢 IMPORT CORRETO da função do serviço
-import { exportPDF } from "../../Services/exportPDF";
 
 export default function DetailsDate() {
   const { currentMonth, setCurrentMonth } = useFinanceStore();
@@ -94,8 +92,15 @@ export default function DetailsDate() {
   const canGoForward = compareMonths(currentMonth, realCurrentMonth) < 0;
 
   return (
-    <div className="mx-44">
+    <div className="mx-44 mt-6">
       <div className="flex justify-between items-center">
+        <section>
+          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+          <p className="text-xl font-medium text-gray-300">
+            Visão geral do seu mês
+          </p>
+        </section>
+
         <div className="flex items-center gap-8">
           <section className="flex items-center">
             <div className="bg-green-950 text-emerald-600 border border-emerald-600 px-2 py-2 rounded-lg mr-3">
@@ -107,9 +112,7 @@ export default function DetailsDate() {
                 {formatMonth(currentMonth)}
               </h1>
 
-              <p className="text-base font-medium text-gray-300">
-                {monthLabel}
-              </p>
+              <p className="text-lg font-medium text-gray-300">{monthLabel}</p>
             </section>
           </section>
 
@@ -145,13 +148,13 @@ export default function DetailsDate() {
           </section>
         </div>
 
-        <Button
-          onClick={() => exportPDF(currentMonth)}  // 🟢 Agora chama a função importada
+        {/* <Button
+          onClick={() => exportPDF(currentMonth)}  
           className="text-lg font-semibold border border-emerald-600 px-4 !h-[45px] bg-green-800 hover:bg-green-900 rounded-lg text-white flex items-center gap-2"
         >
           <PiExportBold className="text-xl font-bold" />
           Exportar relatório
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

@@ -15,3 +15,6 @@ export default function Navbar() {
     </header>
   );
 }
+
+
+// deixou de ser usada quando eu fiz a sidebar

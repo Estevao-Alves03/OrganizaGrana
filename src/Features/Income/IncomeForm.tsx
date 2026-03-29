@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { IoAddOutline } from "react-icons/io5";
+import { PiPushPinDuotone } from "react-icons/pi";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -5,13 +8,10 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { IoAddOutline } from "react-icons/io5";
-import IncomeList from "./IncomeList";
+import { Checkbox } from "../../components/ui/checkbox";
 import { useFinanceStore } from "../../Store/FinanceStore";
 import { showToast } from "../Warnings/ToastContainer";
-import { PiPushPinDuotone } from "react-icons/pi";
-import { Checkbox } from "../../components/ui/checkbox";
-import { useState } from "react";
+import IncomeList from "./IncomeList";
 
 export default function IncomeForm() {
 
@@ -78,7 +78,7 @@ export default function IncomeForm() {
                 name="nameIncome"
                 required
                 placeholder="Ex: Salário, Freelance, Aluguel..."
-                className="w-[450px] border rounded-lg px-4 py-3 text-left 
+                className="w-[400px] border rounded-lg px-4 py-3 text-left 
                   placeholder:text-gray-300 text-lg font-bold
                   focus:outline-none focus:ring-2 focus:ring-green-500 bg-slate-900 text-white"
               />
