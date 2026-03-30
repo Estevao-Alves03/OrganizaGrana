@@ -1,9 +1,15 @@
-import { Outlet, Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import {
+  Outlet,
+  Route,
+  BrowserRouter as Router,
+  Routes,
+} from "react-router-dom";
 import { SidebarProvider } from "./components/ui/sidebar";
-import Dashboard from "./Features/Dashboard/Dashboard";
-import FutureProjection from "./Features/FutureProjection/DashboardFutureProjection";
-import Goals from "./Features/Goals/Goals";
-import Reports from "./Features/Reports/Reports";
+import MainComparison from "./Features/Main/MainComparison";
+import MainDashboard from "./Features/Main/MainDashboard";
+import MainFutureProjection from "./Features/Main/MainFutureProjection";
+import MainGoals from "./Features/Main/MainGoals";
+import MainReports from "./Features/Main/MainReports";
 import AppSideBar from "./Features/SideBar/AppSideBar";
 import { ToastContainer } from "./Features/Warnings/ToastContainer";
 
@@ -11,12 +17,12 @@ import { ToastContainer } from "./Features/Warnings/ToastContainer";
 function MainLayout() {
   return (
     <SidebarProvider>
-      <div className="flex h-screen ">
+      <div className="flex min-h-screen ">
         <AppSideBar />
         <div className="flex-1 pb-20 ">
           <ToastContainer />
-         
-          <Outlet/>
+
+          <Outlet />
         </div>
       </div>
     </SidebarProvider>
@@ -29,11 +35,11 @@ export default function App() {
     <Router>
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          <Route index element={<Dashboard/>}/> 
-          <Route path="/FutureProjection" element={<FutureProjection/>} />
-          <Route path="/Comparison" element={<div className="text-white text-3xl m-10">em progresso...</div>} />
-          <Route path="/Goals" element={<Goals/>} />
-          <Route path="/Reports" element={<Reports />} />
+          <Route index element={<MainDashboard />} />
+          <Route path="/FutureProjection" element={<MainFutureProjection />} />
+          <Route path="/Comparison" element={<MainComparison />} />
+          <Route path="/Goals" element={<MainGoals />} />
+          <Route path="/Reports" element={<MainReports />} />
         </Route>
       </Routes>
     </Router>

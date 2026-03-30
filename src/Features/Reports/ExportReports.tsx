@@ -10,7 +10,7 @@ import {
 
 export default function ExportReports() {
   return (
-    <div className="mt-8 mx-44">
+    <div className="mt-8 mx-44 w-[1380px]">
       <Card className="rounded-xl bg-slate-900 border-slate-600">
         <CardHeader>
           <CardTitle className="text-xl text-white font-bold">

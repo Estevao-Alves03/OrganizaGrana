@@ -17,15 +17,15 @@ import {
 
 export default function DashboardFutureProjection() {
   return (
-    <div className="mx-44 mt-6 w-[1600px]">
+    <div className="mx-44 mt-6">
       <div className="flex items-center justify-between">
         <section>
-          <h1 className="text-3xl font-bold text-white">Projecao Futura</h1>
+          <h1 className="text-3xl font-bold text-white">Projeção Futura</h1>
           <p className="text-xl font-medium text-gray-300">
-            Visualize seus proximos meses com base nas rendas e despesas fixas
+            Visualize seus próximos meses com base nas rendas e despesas fixas
           </p>
         </section>
-        <section>
+        <section className="text-end">
           <Tabs defaultValue="bars" className="w-[420px]">
             <TabsList className="border p-1 rounded-lg  h-[40px] bg-slate-900 border-slate-600 ">
               <TabsTrigger
@@ -49,20 +49,20 @@ export default function DashboardFutureProjection() {
         </section>
       </div>
 
-      <div className="grid grid-cols-4 gap-6 mt-6 w-[1380px]">
+      <div className="grid grid-cols-4 gap-6 mt-6 w-[1440px]">
         {/* Meses registrados */}
         <Card className="rounded-xl bg-slate-900 border-slate-600">
           <CardHeader>
             <CardTitle className="mt-4">
               <div className="flex items-center gap-6">
-                <div className="border rounded-xl p-3 bg-green-900 text-green-600 border-green-600">
+                <div className="border rounded-xl p-3 bg-green-900 text-green-300 border-green-600">
                   <FaWallet className="text-2xl" />
                 </div>
                 <section>
                   <h1 className="text-base text-slate-400 font-medium">
                     Renda fixa mensal
                   </h1>
-                  <p className="text-2xl text-white font-bold">R$00,00</p>
+                  <p className="text-2xl text-white font-bold">R$ 0,00</p>
                 </section>
               </div>
             </CardTitle>
@@ -74,14 +74,14 @@ export default function DashboardFutureProjection() {
           <CardHeader>
             <CardTitle className="mt-4">
               <div className="flex items-center gap-6">
-                <div className="border rounded-xl p-3 bg-red-900 text-red-300 border-red-600">
+                <div className="border rounded-xl p-3 bg-red-900 text-red-100 border-red-600">
                   <FaArrowTrendUp className="text-xl" />
                 </div>
                 <section>
                   <h1 className="text-base text-slate-400 font-medium">
                     Despesas fixas
                   </h1>
-                  <p className="text-2xl text-white font-bold">R$: 00,00</p>
+                  <p className="text-2xl text-white font-bold">R$: 0,00</p>
                 </section>
               </div>
             </CardTitle>
@@ -93,14 +93,14 @@ export default function DashboardFutureProjection() {
           <CardHeader>
             <CardTitle className="mt-4">
               <div className="flex items-center gap-6">
-                <div className="border rounded-xl p-3 bg-green-900 text-green-300 border-green-600">
+                <div className="border rounded-xl p-3 bg-green-900 text-green-100 border-green-600">
                   <IoMdCheckmarkCircleOutline className="text-xl" />
                 </div>
                 <section>
                   <h1 className="text-base text-slate-400 font-medium">
                     Saldo projetado total
                   </h1>
-                  <p className="text-2xl text-white font-bold">R$: 00,00</p>
+                  <p className="text-2xl text-white font-bold">R$: 0,00</p>
                 </section>
               </div>
             </CardTitle>
@@ -112,31 +112,31 @@ export default function DashboardFutureProjection() {
           <CardHeader>
             <CardTitle className="mt-4">
               <div className="flex items-center gap-6">
-                <div className="border rounded-xl p-3 bg-blue-900 text-blue-300 border-blue-600">
+                <div className="border rounded-xl p-3 bg-blue-900 text-blue-100 border-blue-600">
                   <CiCalendar className="text-xl" />
                 </div>
                 <section>
                   <h1 className="text-base text-slate-400 font-medium">
                     Meses projetados
                   </h1>
-                  <p className="text-2xl text-white font-bold">6 meses</p>
+                  <p className="text-xl text-white font-bold">6 meses</p>
                 </section>
               </div>
             </CardTitle>
           </CardHeader>
         </Card>
 
-        <Card className="rounded-xl bg-slate-900 border-slate-600 w-[1380px]">
+        <Card className="rounded-xl bg-slate-900 border-slate-600 w-[1440px]">
           <CardHeader>
             <div className="flex items-center justify-between mt-10">
-              <CardTitle className="text-slate-400">
+              <CardTitle className="text-slate-400 text-lg">
                 Projetar para os proximos:
               </CardTitle>
               <div className="text-slate-400 flex items-center gap-4">
                 <button className="border rounded-md p-2">
                   <MdOutlineKeyboardArrowLeft />
                 </button>
-                <h1 className="text-slate-400 font-bold">6 meses</h1>
+                <h1 className="text-slate-400 font-bold text-xl">6 meses</h1>
                 <button className="border rounded-md p-2">
                   <MdOutlineKeyboardArrowRight />
                 </button>

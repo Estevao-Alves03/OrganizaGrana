@@ -1,6 +1,6 @@
-import GoalsCard from "./GoalsCard";
+import GoalsCard from "../Goals/GoalsCard";
 
-export default function Goals() {
+export default function MainGoals() {
   return (
     <div>
       {/* <AddGoals /> */}

@@ -1,14 +1,14 @@
 import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
 } from "../../components/ui/card";
 
 export default function AddGoals() {
   return (
     <div>
-      <Card className="w-[600px] rounded-xl bg-slate-900 border-slate-600">
+      <Card className="w-[500px] rounded-xl bg-slate-900 border-slate-600">
         <CardHeader>
           <CardTitle className="font-bold text-2xl flex items-center justify-between">
             <h1 className="text-white">Nova Meta Financeira</h1>

@@ -19,7 +19,7 @@ export default function GoalsCard() {
         </p>
       </div>
 
-      <Card className="rounded-xl bg-slate-900 border-slate-600 w-[1500px] mt-6 mx-44">
+      <Card className="rounded-xl bg-slate-900 border-slate-600 w-[1440px] mt-6 mx-44">
         <CardHeader className="flex flex-row items-center justify-between">
           {/* ESQUERDA */}
           <div className="flex items-center gap-3">
@@ -43,9 +43,9 @@ export default function GoalsCard() {
             Nova Meta
           </button>
         </CardHeader>
-        <CardContent className="mt-8 mb-6">
+        <CardContent className="mt-12 mb-6">
           <div className="flex flex-col items-center text-white gap-1">
-            <div className="rounded-xl bg-slate-800 p-2 text-slate-200">
+            <div className="rounded-3xl bg-slate-800 p-2 text-slate-200">
               <FiTarget className="text-3xl" />
             </div>
             <h1 className="text-lg font-medium text-slate-300 ">Nenhuma meta cadastrada ainda.</h1>

@@ -1,7 +1,7 @@
 // CARD EXTERNO PRINCIPAL QUE FALA SOBRE AS RENDAS. O FORMULÁRIO E A LISTAGEM DAS RENDAS 
 // ESTÃO EM OUTROS DOIS ARQUIVOS
 
-
+import { PiCurrencyDollar } from "react-icons/pi";
 import {
   Card,
   CardContent,
@@ -9,8 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { PiCurrencyDollar } from "react-icons/pi";
-import IncomeForm from "./IncomeForm";
+import AddIncome from "./AddIncome";
 
 export default function Incomes() {
   return (
@@ -31,7 +30,7 @@ export default function Incomes() {
           </div>
         </CardHeader>
         <CardContent>
-          <IncomeForm/>
+          <AddIncome/>
         </CardContent>
       </Card>
     </div>

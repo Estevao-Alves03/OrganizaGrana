@@ -1,11 +1,11 @@
 import Expenses from "../Expenses/Expenses";
 import Incomes from "../Income/Incomes";
 import DetailsDate from "../Navbar/DetailsDate";
+import SummaryCard from "../Navbar/SummaryCard";
 import MoneyCard from "../Observations/MoneyCard";
 import Notes from "../Observations/Notes";
-import SummaryCard from "./SummaryCard";
 
-export default function Dashboard() {
+export default function MainDashboard() {
   return (
     <>
       <DetailsDate />
