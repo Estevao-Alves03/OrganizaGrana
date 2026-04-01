@@ -5,57 +5,60 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 
-export default function AddGoals() {
+interface AddGoalsProps {
+  onCloseCard: () => void;
+}
+
+export default function AddGoals({ onCloseCard }: AddGoalsProps) {
   return (
-    <div>
+    <div className="flex items-center justify-center fixed inset-0 backdrop-blur-sm bg-black/90 z-50">
       <Card className="w-[500px] rounded-xl bg-slate-900 border-slate-600">
         <CardHeader>
-          <CardTitle className="font-bold text-2xl flex items-center justify-between">
+          <CardTitle className="font-bold text-2xl flex items-center justify-between mb-4">
             <h1 className="text-white">Nova Meta Financeira</h1>
-            <button className="text-base text-slate-500 mr-1">X</button>
+            <button onClick={onCloseCard} className="text-base text-slate-500 mr-1">X</button>
           </CardTitle>
         </CardHeader>
         <CardContent>
           <form>
             <div className="flex flex-col">
-              <label className="font-bold text-base text-slate-300 ml-1">Nome da meta</label>
+              <label className="font-bold font-sans text-lg text-white">Nome da meta</label>
               <input
                 type="text"
-                name="namegoal"
+                name=""
                 placeholder="Ex: Viagem, Fundo de emergencia, Carro novo..."
-                className="border rounded-xl px-3 py-2 w-full bg-slate-900 border-slate-600 mt-1"
+                className="border px-3 py-2.5 rounded-xl placeholder:text-base focus:outline-none focus:ring-2 focus:ring-green-600 font-semibold bg-slate-900 text-white mt-1"
               />
             </div>
             <div className="grid grid-cols-2 gap-3 mt-6">
               <section>
-                <label className="font-bold text-base text-slate-300 ml-1">Valor da neta (R$)</label>
+                <label className="font-bold font-sans text-lg text-white">Valor da meta (R$)</label>
                 <input
                   type="text"
-                  name="namegoal"
+                  name=""
                   placeholder="10.000,00"
-                  className="border rounded-xl px-3 py-2 w-full bg-slate-900 border-slate-600 mt-1"
+                  className="border w-full px-3 py-2.5 rounded-xl placeholder:text-base focus:outline-none focus:ring-2 focus:ring-green-600 font-semibold bg-slate-900 text-white mt-1"
                 />
               </section>
               <section>
-                <label className="font-bold text-base text-slate-300 ml-1">Já guardou (R$)</label>
+                <label className="font-bold font-sans text-lg text-white">Já guardou (R$)</label>
                 <input
                   type="text"
-                  name="namegoal"
+                  name=""
                   placeholder="0,00"
-                  className="border rounded-xl px-3 py-2 w-full bg-slate-900 border-slate-600 mt-1"
+                  className="border w-full px-3 py-2.5 rounded-xl placeholder:text-base focus:outline-none focus:ring-2 focus:ring-green-600 font-semibold bg-slate-900 text-white mt-1"
                 />
               </section>
             </div>
-            <div className="mt-6">
-              <label className="font-bold text-base text-slate-300 ml-1">Prazo</label>
+            <div className="mt-6 flex flex-col">
+              <label className="font-bold font-sans text-lg text-white">Prazo</label>
               <input
-                type="text"
-                name="namegoal"
-                placeholder="dd/mm/aaaa"
-                className="border rounded-xl px-3 py-2 w-full bg-slate-900 border-slate-600 mt-1"
+                type="date"
+                name=""
+                className="border px-3 py-2.5 rounded-xl placeholder:text-base focus:outline-none focus:ring-2 focus:ring-green-600 font-semibold bg-slate-900 text-white mt-1"
               />
             </div>
-            <button className="w-full rounded-xl mt-5 py-3 bg-green-600 hover:bg-green-700 text-white font-bold text-lg">
+            <button className="bg-green-800 border border-emerald-600 hover:bg-green-900 text-white px-4 py-3 mt-5 rounded-xl font-bold text-base w-full">
                 Criar Meta
             </button>
           </form>

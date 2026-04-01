@@ -12,7 +12,7 @@ export default function DashboardReports() {
     <div>
       {/* Título */}
       <div className="mx-44 mt-6 w-[1380px]">
-        <h1 className="text-3xl font-bold text-white">Relátorios</h1>
+        <h1 className="text-3xl font-bold text-white">Relatórios</h1>
         <p className="text-xl font-medium text-gray-300">
           Exporte seus dados financeiros em diferentes formatos
         </p>
@@ -47,7 +47,7 @@ export default function DashboardReports() {
                 </div>
                 <section>
                   <h1 className="text-base text-slate-400 font-medium mr-16">Total de receitas</h1>
-                  <p className="text-2xl text-white font-bold">R$: 00,00</p>
+                  <p className="text-2xl text-white font-bold">R$: 0,00</p>
                 </section>
               </div>
             </CardTitle>
@@ -64,7 +64,7 @@ export default function DashboardReports() {
                 </div>
                 <section>
                   <h1 className="text-base text-slate-400 font-medium mr-16">Total de despesas</h1>
-                  <p className="text-2xl text-white font-bold">R$: 00,00</p>
+                  <p className="text-2xl text-white font-bold">R$: 0,00</p>
                 </section>
               </div>
             </CardTitle>

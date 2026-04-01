@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { FaArrowTrendUp, FaWallet } from "react-icons/fa6";
 import { FiTarget } from "react-icons/fi";
 import { IoDocumentTextOutline } from "react-icons/io5";
@@ -23,42 +22,41 @@ export default function AppSideBar() {
       id: "dashboard",
       title: "Dashboard",
       description: "Visão geral do mês",
-      paht: "/",
+      path: "/",
       icon: MdOutlineDashboard,
     },
     {
       id: "projeção futura",
       title: "Projeção Futura",
       description: "Planeje os próxims meses",
-      paht: "FutureProjection",
+      path: "/FutureProjection",
       icon: FaArrowTrendUp,
     },
     {
       id: "comparação",
       title: "Comparação",
       description: "Compare seus meses",
-      paht: "/Comparison",
+      path: "/Comparison",
       icon: LuArrowLeftRight,
     },
     {
       id: "metas",
       title: "Metas",
       description: "Objetivos financeiros",
-      paht: "/Goals",
+      path: "/Goals",
       icon: FiTarget,
     },
     {
-      id: "relátorios",
-      title: "Relátorios",
+      id: "relatórios",
+      title: "Relatórios",
       description: "Exportar dados",
-      paht: "/Reports",
+      path: "/Reports",
       icon: IoDocumentTextOutline,
     },
   ];
 
   const location = useLocation();
   const { open } = useSidebar();
-  const [active, setActive] = useState("dashboard");
   const { toggleSidebar } = useSidebar();
 
   return (
@@ -89,23 +87,17 @@ export default function AppSideBar() {
           <div className="flex flex-col gap-2">
             {items.map((item) => {
               const Icon = item.icon;
-              const isActive = active === item.id;
+              const isActive = location.pathname === item.path;
 
               return (
-                <Link to={item.paht} key={item.id}>
+                <Link to={item.path} key={item.id}>
                   <Button
-                    key={item.id}
-                    onClick={() => setActive(item.id)}
-                    variant={location.pathname === item.paht && isActive ? "default" : "ghost"}
+                    variant={isActive ? "default" : "ghost"}
                     className={`
-          rounded-2xl px-4 py-3 w-full h-auto text-left flex items-start gap-2
-          justify-start text-white
-          ${
-            isActive
-              ? "bg-green-900 hover:bg-green-800 text-white"
-              : "hover:bg-slate-800 text-white hover:text-white"
-          }
-        `}
+    rounded-2xl px-4 py-3 w-full h-auto text-left flex items-start gap-2
+    justify-start text-white
+    ${isActive ? "bg-green-900 hover:bg-green-800" : "hover:bg-slate-800"}
+  `}
                   >
                     <div
                       className={`flex items-center gap-2 ${open ? "justify-start" : "justify-center"}`}

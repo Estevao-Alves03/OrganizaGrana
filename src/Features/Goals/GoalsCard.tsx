@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FiTarget } from "react-icons/fi";
 import { IoMdAdd } from "react-icons/io";
 import {
@@ -7,8 +8,22 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
+import AddGoals from "./AddGoals";
 
 export default function GoalsCard() {
+
+  const [showCard, setShowCard] = useState(false)
+
+  const openCard = () => {
+    setShowCard(true)
+  }
+
+  const closeCard = () => {
+    setShowCard(false)
+  }
+
+
+
   return (
     <div>
       {/* titulo */}
@@ -38,7 +53,9 @@ export default function GoalsCard() {
           </div>
 
           {/* DIREITA */}
-          <button className="flex items-center gap-2 p-2 rounded-xl bg-green-700 hover:bg-green-800 text-white font-bold px-6 py-2 text-lg">
+          <button 
+          onClick={openCard}
+          className="flex items-center gap-2 p-2 rounded-xl bg-green-700 hover:bg-green-800 text-white font-bold px-6 py-2 text-lg">
             <IoMdAdd className="w-5 h-5" />
             Nova Meta
           </button>
@@ -53,6 +70,8 @@ export default function GoalsCard() {
           </div>
         </CardContent>
       </Card>
+
+      {showCard && <AddGoals onCloseCard={closeCard}/>}
     </div>
   );
 }

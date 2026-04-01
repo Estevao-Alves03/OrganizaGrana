@@ -64,7 +64,7 @@ export default function BalanceRanking() {
             return (
               <div key={item.id} className="mt-3 flex items-center justify-between border border-slate-600 p-3 rounded-xl">
               <section className="flex items-center gap-3">
-                <span className="text-2xl border bg-green-900/30 border-green-700 text-white rounded-full w-16 h-16 flex items-center justify-center">
+                <span className="text-2xl border bg-slate-900/30 border-slate-700 text-white rounded-full w-16 h-16 flex items-center justify-center">
                    {index + 1}
                 </span>
                 <section className="">
@@ -83,7 +83,7 @@ export default function BalanceRanking() {
               </section>
 
               <section>
-                <h1 className="text-2xl text-slate-300 font-bold">
+                <h1 className="text-2xl text-slate-400 font-semibold mr-4">
                   R$: {item.balance}
                 </h1>
               </section>
