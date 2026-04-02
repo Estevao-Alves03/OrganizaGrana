@@ -1,7 +1,12 @@
 import { Card, CardContent } from "../../components/ui/card";
 
+interface AddExtraExpensesProps {
+ onCloseCard: () => void
+}
 
-export default function AddExtraExpenses() {
+
+
+export default function AddExtraExpenses({onCloseCard}: AddExtraExpensesProps) {
   return (
     <div>
        <Card className="border border-dashed rounded-xl bg-slate-900 border-slate-600">
@@ -27,9 +32,12 @@ export default function AddExtraExpenses() {
                         className="rounded-lg bg-slate-800 px-3 py-2 placeholder:text-slate-400 placeholder:font-bold mt-2" />
                     </section>
                 </div>
-                <div className="flex flex-row gap-3 justify-end mt-3">
-                    <button className="text-lg font-medium rounded-lg px-3 py-1 text-white bg-transparent hover:bg-slate-800/70">Cancelar</button>
-                    <button className="text-lg font-medium rounded-lg px-3 py-1 text-white bg-green-800 hover:bg-green-900">Adicionar</button>
+                <div className="flex flex-row gap-3 justify-end mt-5">
+                    <button 
+                    onClick={onCloseCard}
+                    className="text-lg font-medium rounded-lg px-6 py-1.5 text-white bg-transparent hover:bg-slate-800/70">Cancelar</button>
+                    <button 
+                    className="text-lg font-medium rounded-lg px-6 py-1.5 text-white bg-green-800 hover:bg-green-900">Adicionar</button>
                 </div>
             </form>
          </CardContent>

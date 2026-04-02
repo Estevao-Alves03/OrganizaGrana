@@ -1,4 +1,5 @@
-import { GrDocumentText, GrDownload } from "react-icons/gr";
+import { GrDocumentText } from "react-icons/gr";
+import { PiDownloadSimpleBold } from "react-icons/pi";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -23,7 +24,16 @@ export default function ExportReports() {
         <CardContent>
           {/* Formatos de exportaçao */}
           <h1 className="text-base text-white font-bold mb-3 mt-3">Formato</h1>
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-3 gap-6">
+            <Button className="h-auto p-6 rounded-xl border bg-slate-900 border-slate-600 hover:border-slate-400 hover:bg-transparent">
+              <div className="flex flex-col items-center gap-1">
+                <GrDocumentText className="!w-8 !h-8 shrink-0" />
+                <h1 className="text-xl mt-3">PDF</h1>
+                <span className="text-base font-medium text-slate-300">
+                  Impressão e compartilhamento
+                </span>
+              </div>
+            </Button>
             <Button className="h-auto p-6 rounded-xl border bg-slate-900 border-slate-600 hover:border-slate-400 hover:bg-transparent">
               <div className="flex flex-col items-center gap-1">
                 <GrDocumentText className="!w-8 !h-8 shrink-0" />
@@ -46,18 +56,23 @@ export default function ExportReports() {
 
           {/* Meses escolhidos */}
           <h1 className="text-base text-white font-bold mb-3 mt-6">Meses</h1>
-          <div className="grid grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-3 gap-6 mb-8">
+            <Button className="h-auto p-4 font-medium text-base rounded-xl border bg-slate-900 border-slate-600 hover:border-slate-400 hover:bg-transparent">
+              Mês atual
+            </Button>
+            <Button className="h-auto p-4 font-medium text-base rounded-xl border bg-slate-900 border-slate-600 hover:border-slate-400 hover:bg-transparent">
+              Selecionar meses
+            </Button>
             <Button className="h-auto p-4 font-medium text-base rounded-xl border bg-slate-900 border-slate-600 hover:border-slate-400 hover:bg-transparent">
               Todos os meses (0)
             </Button>
-            <Button className="h-auto p-4 font-medium text-base rounded-xl border bg-slate-900 border-slate-600 hover:border-slate-400 hover:bg-transparent">
-              Selecionar mês
-            </Button>
           </div>
-          <span className="text-slate-300 text-lg font-medium">Selecione os meses (0 selecionados)</span>
-          <Button className="text-lg font-medium py-6 w-full mt-4 bg-green-700 hover:bg-green-800 rounded-xl">
-            <GrDownload/>
-            Exportar CSV
+          <span className="text-slate-300 text-lg font-medium">
+            Selecione os meses (0 selecionados)
+          </span>
+          <Button className="text-lg font-medium py-8 w-full mt-4 bg-green-700 hover:bg-green-800 rounded-xl">
+            <PiDownloadSimpleBold className="!w-5 !h-5"/>
+            Exportar PDF
           </Button>
         </CardContent>
       </Card>
