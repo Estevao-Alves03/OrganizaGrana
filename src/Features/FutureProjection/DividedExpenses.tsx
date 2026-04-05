@@ -1,4 +1,3 @@
-import { BiInfoCircle } from "react-icons/bi";
 import {
   Card,
   CardContent,
@@ -6,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
+import CreditList from "./Lists/CreditList";
 
 export default function DividedExpenses() {
   return (
@@ -20,13 +20,14 @@ export default function DividedExpenses() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 text-slate-600 mt-5">
+          <CreditList/>
+          {/* <div className="flex items-center gap-2 text-slate-600 mt-5">
             <BiInfoCircle className="text-xl mb-1"/>
             <span className="text-lg font-medium">
               Cadastre despesas divididas no cartão de cŕedito para termos uma
               visualização de tempo
             </span>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
     </div>

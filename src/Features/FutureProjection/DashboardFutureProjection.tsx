@@ -1,4 +1,4 @@
-import { BsGraphUp } from "react-icons/bs";
+import { useState } from "react";
 import { CiCalendar } from "react-icons/ci";
 import { FaArrowTrendUp, FaWallet } from "react-icons/fa6";
 import { IoMdCheckmarkCircleOutline } from "react-icons/io";
@@ -6,18 +6,14 @@ import {
   MdOutlineKeyboardArrowLeft,
   MdOutlineKeyboardArrowRight,
 } from "react-icons/md";
-import { VscGraph } from "react-icons/vsc";
 import { Card, CardHeader, CardTitle } from "../../components/ui/card";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../components/ui/tabs";
 
 export default function DashboardFutureProjection() {
+  const [meses, setMeses] = useState(6);
+
   return (
     <div className="mx-44 mt-6">
+      {/* HEADER */}
       <div className="flex items-center justify-between">
         <section>
           <h1 className="text-3xl font-bold text-white">Projeção Futura</h1>
@@ -25,32 +21,11 @@ export default function DashboardFutureProjection() {
             Visualize seus próximos meses com base nas rendas e despesas fixas
           </p>
         </section>
-        <section className="text-end">
-          <Tabs defaultValue="bars" className="w-[420px]">
-            <TabsList className="border p-1 rounded-lg  h-[40px] bg-slate-900 border-slate-600 ">
-              <TabsTrigger
-                value="bars"
-                className="flex-1 rounded-md text-base font-semibold gap-2"
-              >
-                <VscGraph />
-                Barras
-              </TabsTrigger>
-              <TabsTrigger
-                value="lines"
-                className="flex-1 rounded-md text-base font-semibold gap-2"
-              >
-                <BsGraphUp />
-                Linhas
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="bars"></TabsContent>
-            <TabsContent value="lines"></TabsContent>
-          </Tabs>
-        </section>
       </div>
 
+      {/* CARDS */}
       <div className="grid grid-cols-4 gap-6 mt-6 w-[1440px]">
-        {/* Meses registrados */}
+        {/* renda fixa */}
         <Card className="rounded-xl bg-slate-900 border-slate-600">
           <CardHeader>
             <CardTitle className="mt-4">
@@ -69,7 +44,7 @@ export default function DashboardFutureProjection() {
           </CardHeader>
         </Card>
 
-        {/* total da receita */}
+        {/* despesas */}
         <Card className="rounded-xl bg-slate-900 border-slate-600">
           <CardHeader>
             <CardTitle className="mt-4">
@@ -88,7 +63,7 @@ export default function DashboardFutureProjection() {
           </CardHeader>
         </Card>
 
-        {/* total da despesa */}
+        {/* saldo */}
         <Card className="rounded-xl bg-slate-900 border-slate-600">
           <CardHeader>
             <CardTitle className="mt-4">
@@ -107,7 +82,7 @@ export default function DashboardFutureProjection() {
           </CardHeader>
         </Card>
 
-        {/* total da despesa */}
+        {/* meses */}
         <Card className="rounded-xl bg-slate-900 border-slate-600">
           <CardHeader>
             <CardTitle className="mt-4">
@@ -119,32 +94,41 @@ export default function DashboardFutureProjection() {
                   <h1 className="text-base text-slate-400 font-medium">
                     Meses projetados
                   </h1>
-                  <p className="text-xl text-white font-bold">6 meses</p>
+                  <p className="text-xl text-white font-bold">{meses} meses</p>
                 </section>
               </div>
             </CardTitle>
           </CardHeader>
         </Card>
-
-        <Card className="rounded-xl bg-slate-900 border-slate-600 w-[1440px]">
-          <CardHeader>
-            <div className="flex items-center justify-between mt-10">
-              <CardTitle className="text-slate-400 text-lg">
-                Projetar para os proximos:
-              </CardTitle>
-              <div className="text-slate-400 flex items-center gap-4">
-                <button className="border rounded-md p-2">
-                  <MdOutlineKeyboardArrowLeft />
-                </button>
-                <h1 className="text-slate-400 font-bold text-xl">6 meses</h1>
-                <button className="border rounded-md p-2">
-                  <MdOutlineKeyboardArrowRight />
-                </button>
-              </div>
-            </div>
-          </CardHeader>
-        </Card>
       </div>
+
+      {/* CONTROLE DE MESES */}
+      <Card className="rounded-xl bg-slate-900 border-slate-600 w-[1440px] mt-6">
+        <CardHeader>
+          <div className="flex items-center justify-between mt-10">
+            <CardTitle className="text-slate-400 text-lg">
+              Projetar para os proximos:
+            </CardTitle>
+            <div className="text-slate-400 flex items-center gap-4">
+              <button
+                onClick={() => setMeses((m) => Math.max(1, m - 1))}
+                className="border rounded-md p-2"
+              >
+                <MdOutlineKeyboardArrowLeft />
+              </button>
+              <h1 className="text-slate-400 font-bold text-xl">
+                {meses} meses
+              </h1>
+              <button
+                onClick={() => setMeses((m) => Math.min(24, m + 1))}
+                className="border rounded-md p-2"
+              >
+                <MdOutlineKeyboardArrowRight />
+              </button>
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
     </div>
   );
 }

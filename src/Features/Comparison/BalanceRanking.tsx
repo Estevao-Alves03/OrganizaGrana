@@ -11,8 +11,8 @@ type Items = {
   expense: number;
   id: number;
   month: string;
-  balance: number
-}
+  balance: number;
+};
 
 export default function BalanceRanking() {
   const items: Items[] = [
@@ -46,7 +46,7 @@ export default function BalanceRanking() {
     },
   ];
 
-  const sorted = [...items].sort((a, b) => b.balance - a.balance)
+  const sorted = [...items].sort((a, b) => b.balance - a.balance);
 
   return (
     <div className="mx-44">
@@ -56,39 +56,63 @@ export default function BalanceRanking() {
             Ranking de Saldo
           </CardTitle>
           <CardDescription className="text-base text-slate-400 font-medium">
-            Do melhor para o pior mes
+            Do melhor para o pior mês
           </CardDescription>
         </CardHeader>
+
         <CardContent>
           {sorted.map((item, index) => {
-            return (
-              <div key={item.id} className="mt-3 flex items-center justify-between border border-slate-600 p-3 rounded-xl">
-              <section className="flex items-center gap-3">
-                <span className="text-2xl border bg-slate-900/30 border-slate-700 text-white rounded-full w-16 h-16 flex items-center justify-center">
-                   {index + 1}
-                </span>
-                <section className="">
-                  <h1 className="text-white text-xl font-bold">
-                    {item.month}
-                  </h1>
-                  <div className="flex gap-3">
-                    <span className="text-slate-300">
-                      <strong>Renda:</strong> R$ {item.income}
-                    </span>
-                    <span className="text-slate-300">
-                      <strong>Despesas:</strong> R$ {item.expense}
-                    </span>
-                  </div>
-                </section>
-              </section>
+            const isBest = index === 0;
+            const isWorst = index === sorted.length - 1;
 
-              <section>
-                <h1 className="text-2xl text-slate-400 font-semibold mr-4">
-                  R$: {item.balance}
-                </h1>
-              </section>
-            </div>
-            )
+            return (
+              <div
+                key={item.id}
+                className={`
+                  mt-3 flex items-center justify-between p-3 rounded-xl border transition-all
+                  ${isBest ? "border-green-500" : ""}
+                  ${isWorst ? "border-red-500" : ""}
+                  ${!isBest && !isWorst ? "border-slate-600" : ""}
+                `}
+              >
+                {/* LEFT SIDE */}
+                <section className="flex items-center gap-3">
+                  <span
+                    className={`
+                      text-2xl rounded-full w-16 h-16 flex items-center justify-center font-bold border
+                      ${isBest ? "border-green-500 text-green-400" : ""}
+                      ${isWorst ? "border-red-500 text-red-400" : ""}
+                      ${!isBest && !isWorst ? "border-slate-700 text-white" : ""}
+                    `}
+                  >
+                    {index + 1}
+                  </span>
+
+                  <section>
+                    <h1 className="text-white text-xl font-bold">
+                      {item.month}
+                    </h1>
+
+                    <div className="flex gap-3">
+                      <span className="text-slate-300">
+                        <strong>Renda:</strong> R$ {item.income}
+                      </span>
+
+                      <span className="text-slate-300">
+                        <strong>Despesas:</strong> R$ {item.expense}
+                      </span>
+                    </div>
+                  </section>
+                </section>
+
+                {/* RIGHT SIDE */}
+                <section>
+                  <h1 className="text-2xl text-slate-400 font-semibold mr-4">
+                    R$: {item.balance}
+                  </h1>
+                </section>
+              </div>
+            );
           })}
         </CardContent>
       </Card>

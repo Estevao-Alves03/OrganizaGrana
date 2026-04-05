@@ -1,4 +1,5 @@
 // ARQUIVO QUE MOSTRA OS CARDS (PIXXA E BARRA)
+import { Bar, BarChart, Cell, Pie, PieChart, XAxis, YAxis } from "recharts";
 import {
   Card,
   CardContent,
@@ -7,20 +8,19 @@ import {
   CardTitle,
 } from "../../components/ui/card";
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../components/ui/tabs";
-import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
   type ChartConfig,
 } from "../../components/ui/chart";
-import { Pie, PieChart, Cell, BarChart, Bar, XAxis, YAxis } from "recharts";
-import { categoryColors } from "../../Utils/categoryColors";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
 import { useFinanceStore } from "../../Store/FinanceStore";
+import { categoryColors } from "../../Utils/categoryColors";
 
 export default function GraphicsExpenses() {
   const transactions = useFinanceStore((state) => state.transactions);
@@ -75,7 +75,7 @@ export default function GraphicsExpenses() {
         <CardContent>
           <Tabs defaultValue="category" className="w-full">
             {/* Tabs */}
-            <TabsList className="border p-1 rounded-lg w-full h-[45px] bg-slate-900 border-slate-600 ">
+            <TabsList className="border p-1 rounded-lg w-full h-[45px] bg-slate-900 border-slate-600">
               <TabsTrigger
                 value="category"
                 className="flex-1 rounded-md text-lg font-semibold"

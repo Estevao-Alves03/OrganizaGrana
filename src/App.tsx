@@ -17,9 +17,9 @@ import { ToastContainer } from "./Features/Warnings/ToastContainer";
 function MainLayout() {
   return (
     <SidebarProvider>
-      <div className="flex min-h-screen ">
+     <div className="flex h-screen overflow-hidden">
         <AppSideBar />
-        <div className="flex-1 pb-20 ">
+        <div className="flex-1 overflow-y-auto pb-20">
           <ToastContainer />
 
           <Outlet />

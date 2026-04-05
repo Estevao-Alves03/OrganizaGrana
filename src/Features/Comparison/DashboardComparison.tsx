@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { GoArrowSwitch } from "react-icons/go";
 import {
   Card,
   CardContent,
@@ -101,27 +100,9 @@ export default function DashboardComparison() {
           </>
         )}
       </Card>
-      
-      {/* se nao for selecionado dois meses pelo menos - mostra esse card */}
-      <Card className="rounded-xl bg-slate-900 border-slate-600 w-[1380px] mt-6">
-        <CardHeader className="py-36">
-          <div className="flex flex-col items-center">
-            <div className="text-slate-300">
-              <GoArrowSwitch size={58}/>
-            </div>
-            <CardTitle className="text-3xl font-bold text-slate-300 mt-6">
-              Selecione pelo menos 2 meses para comparar
-            </CardTitle>
-            <CardDescription className="font-medium text-slate-400 text-xl mt-1">
-              Clique em "Mostrar meses" acima para selecionar
-            </CardDescription>
-          </div>
-        </CardHeader>
-      </Card>
 
-      
       {/* Cards de comparação - so mostrar se tiver pelo menos 2 meses selecionados */}
-      {/* <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-4 gap-3">
         <Card className="rounded-xl bg-slate-900 border-slate-600 mt-6 pt-8">
           <CardHeader>
             <CardTitle className="text-lg font-bold text-slate-400">
@@ -175,7 +156,24 @@ export default function DashboardComparison() {
             </CardDescription>
           </CardHeader>
         </Card>
-      </div> */}
+      </div>
+
+      {/* se nao for selecionado dois meses pelo menos - mostra esse card */}
+      {/* <Card className="rounded-xl bg-slate-900 border-slate-600 w-[1380px] mt-6">
+        <CardHeader className="py-36">
+          <div className="flex flex-col items-center">
+            <div className="text-slate-300">
+              <GoArrowSwitch size={58} />
+            </div>
+            <CardTitle className="text-3xl font-bold text-slate-300 mt-6">
+              Selecione pelo menos 2 meses para comparar
+            </CardTitle>
+            <CardDescription className="font-medium text-slate-400 text-xl mt-1">
+              Clique em "Mostrar meses" acima para selecionar
+            </CardDescription>
+          </div>
+        </CardHeader>
+      </Card> */}
     </div>
   );
 }

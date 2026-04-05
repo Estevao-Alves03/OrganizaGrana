@@ -61,9 +61,18 @@ export default function AppSideBar() {
 
   return (
     <Sidebar
-      className={`[--sidebar-background:theme(colors.slate.900)] bg-slate-900 border-slate-600 border-b pt-2 shadow-sm shadow-stone-950 text-white ${
-        open ? "w-64" : "w-16"
-      }`}
+      className={`
+    [--sidebar-background:theme(colors.slate.900)]
+    bg-slate-900
+    border-slate-600 border-r
+    pt-2
+    shadow-sm shadow-stone-950
+    text-white
+    h-screen
+    flex flex-col
+    sticky top-0
+    ${open ? "w-64" : "w-16"}
+  `}
       collapsible="none"
     >
       <SidebarHeader>
@@ -102,7 +111,7 @@ export default function AppSideBar() {
                     <div
                       className={`flex items-center gap-2 ${open ? "justify-start" : "justify-center"}`}
                     >
-                      <Icon className="!w-5 !h-8" />
+                      <Icon className="!w-5 !h-8 text-white" />
                       {open && (
                         <div className="flex flex-col">
                           <span className="text-base font-bold text-white group-hover:text-white">

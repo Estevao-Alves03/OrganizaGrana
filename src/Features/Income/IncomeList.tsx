@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { Card } from "../../components/ui/card";
 import { FaExclamationTriangle, FaTrash } from "react-icons/fa";
+import { PiPushPinDuotone } from "react-icons/pi";
+import { Card } from "../../components/ui/card";
 import { useFinanceStore } from "../../Store/FinanceStore";
 import { showToast } from "../Warnings/ToastContainer";
-import { PiPushPinDuotone } from "react-icons/pi";
 
 interface ConfirmDeletionProps {
   onCloseWarning: () => void;
@@ -50,6 +50,9 @@ function ConfirmDeletion({ onCloseWarning, onConfirm }: ConfirmDeletionProps) {
 export default function IncomeList() {
   const transactions = useFinanceStore((state) => state.transactions);
   const incomes = transactions.filter((t) => t.type === "income");
+
+  // const fixedIncomes = incomes.filter((i) => i.fixed)
+  // const variableIncomes = incomes.filter((i) => !i.fixed)
 
   const removeTransaction = useFinanceStore((state) => state.removeTransaction);
   const updateTransactionAmount = useFinanceStore(
