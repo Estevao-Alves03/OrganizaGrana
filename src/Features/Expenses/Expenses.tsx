@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { GoTag } from "react-icons/go";
+import { IoAddOutline } from "react-icons/io5";
 import { Button } from "../../components/ui/button";
 import {
   Card,
@@ -6,11 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
-import { IoAddOutline } from "react-icons/io5";
-import { GoTag } from "react-icons/go";
-import { useState } from "react";
 
-import AddExpenses from "./AddExpenses";
+import AddExpenses from "./Components/AddExpenses";
 import ExpensesList from "./ExpensesList";
 import GraphicsExpenses from "./GraphicsExpenses";
 

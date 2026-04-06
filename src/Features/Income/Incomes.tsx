@@ -1,4 +1,4 @@
-// CARD EXTERNO PRINCIPAL QUE FALA SOBRE AS RENDAS. O FORMULÁRIO E A LISTAGEM DAS RENDAS 
+// CARD EXTERNO PRINCIPAL QUE FALA SOBRE AS RENDAS. O FORMULÁRIO E A LISTAGEM DAS RENDAS
 // ESTÃO EM OUTROS DOIS ARQUIVOS
 
 import { PiCurrencyDollar } from "react-icons/pi";
@@ -9,9 +9,18 @@ import {
   CardHeader,
   CardTitle,
 } from "../../components/ui/card";
+import { useFinanceStore } from "../../Store/FinanceStore";
 import AddIncome from "./AddIncome";
 
 export default function Incomes() {
+  const transactions = useFinanceStore((state) => state.transactions);
+  const incomes = transactions.filter((t) => t.type === "income");
+
+  const getTotals = useFinanceStore((state) => state.getTotals);
+
+  const totals = getTotals();
+  const totalIncomes = totals.totalIncome;
+
   return (
     <div className="">
       <Card className="bg-slate-900 border-slate-600 ">
@@ -21,16 +30,18 @@ export default function Incomes() {
               <PiCurrencyDollar size={18} />
             </div>
             <div>
-              <CardTitle className="text-xl font-bold text-white">Suas Rendas</CardTitle>
+              <CardTitle className="text-xl font-bold text-white">
+                Suas Rendas
+              </CardTitle>
               <CardDescription className="text-lg text-zinc-300 font-sans font-medium">
-                Adicione suas fontes de renda do mês
+                 {incomes.length > 0 ? `Total: R$ ${totalIncomes.toLocaleString("pt-BR")} em ${incomes.length} fonte` :  "Adicione suas fontes de renda do mês"}
               </CardDescription>
               {/* Total: R$ 00,00 de x fonte */}
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <AddIncome/>
+          <AddIncome />
         </CardContent>
       </Card>
     </div>

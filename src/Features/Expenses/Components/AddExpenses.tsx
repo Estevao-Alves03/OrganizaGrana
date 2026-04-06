@@ -1,5 +1,14 @@
 import { useEffect, useState } from "react";
 // componentes
+import { Button } from "../../../components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../../../components/ui/card";
+import { Checkbox } from "../../../components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -7,29 +16,20 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../components/ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "../../components/ui/card";
-import { Checkbox } from "../../components/ui/checkbox";
-import { Textarea } from "../../components/ui/textarea";
-import { Button } from "../../components/ui/button";
-import { Switch } from "../../components/ui/switch";
+} from "../../../components/ui/select";
+import { Switch } from "../../../components/ui/switch";
+import { Textarea } from "../../../components/ui/textarea";
 // zustand
-import type { Transaction } from "../../Store/FinanceStore";
-import { useFinanceStore } from "../../Store/FinanceStore";
+import type { Transaction } from "../../../Store/FinanceStore";
+import { useFinanceStore } from "../../../Store/FinanceStore";
 // types
-import type { Category } from "../../Types/Category";
+import type { Category } from "../../../Types/Category";
 // react icons
-import { IoCloseOutline } from "react-icons/io5";
 import { FaRegCreditCard } from "react-icons/fa6";
+import { IoCloseOutline } from "react-icons/io5";
 
 // paginas
-import { showToast } from "../Warnings/ToastContainer";
+import { showToast } from "../../Warnings/ToastContainer";
 
 interface AddExpensesProps {
   onCloseCard: () => void;
@@ -41,6 +41,15 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
   const [isFixed, setIsFixed] = useState(false);
   const [active, setActive] = useState(false);
   const currentMonth = new Date().toISOString().slice(0, 7);
+
+  const [totalPrice, setTotalPrice] = useState("");
+  const [installments, setInstallments] = useState(1);
+  const [price, setPrice] = useState("");
+
+  // 👇 cálculo seguro
+  const parsedTotal = Number(totalPrice.replace(",", "."));
+  const installmentValue =
+    !isNaN(parsedTotal) && installments > 0 ? parsedTotal / installments : 0;
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -54,14 +63,46 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
 
     const formData = new FormData(e.currentTarget);
 
+    const name = formData.get("nameExpense") as string;
+    const observation = (formData.get("observation") as string) || "";
+
+    // 👇 CASO SEJA CRÉDITO
+    if (active) {
+      const totalAmount = Number(
+        (formData.get("totalPrice") as string)?.replace(",", ".") || 0,
+      );
+
+      const installments = Number(formData.get("installments") || 1);
+
+      const creditTransaction = {
+        id: crypto.randomUUID(),
+        name,
+        totalAmount,
+        installments,
+        startMonth: currentMonth,
+        category,
+      };
+
+      useFinanceStore.getState().addCreditTransaction(creditTransaction);
+
+      showToast({
+        type: "success",
+        text: `Compra parcelada "${name}" adicionada!`,
+      });
+
+      onCloseCard();
+      return;
+    }
+
+    // 👇 CASO NORMAL
     const transaction: Transaction = {
       id: crypto.randomUUID(),
-      name: formData.get("nameExpense") as string,
+      name,
       amount: Number((formData.get("price") as string)?.replace(",", ".") || 0),
       type: "expense",
       category,
-      notes: (formData.get("observation") as string) || "",
-      fixed: isFixed, // checkbox
+      notes: observation,
+      fixed: isFixed,
       month: currentMonth,
     };
 
@@ -69,7 +110,7 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
 
     showToast({
       type: "success",
-      text: `Depesa ${transaction.name} adicionada com sucesso!`,
+      text: `Despesa ${transaction.name} adicionada com sucesso!`,
     });
 
     onCloseCard();
@@ -145,8 +186,10 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                         type="text"
                         name="totalPrice"
                         required
+                        value={totalPrice}
+                        onChange={(e) => setTotalPrice(e.target.value)}
                         inputMode="decimal"
-                        placeholder="00,00"
+                        placeholder="0,00"
                         className="border rounded-lg py-2 mt-2 bg-slate-900 text-white pl-9 font-bold w-[280px] text-lg"
                       />
                     </div>
@@ -159,7 +202,8 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                     <input
                       type="number"
                       name="installments"
-                      defaultValue={1}
+                      value={installments}
+                      onChange={(e) => setInstallments(Number(e.target.value))}
                       min={1}
                       max={60}
                       className="border rounded-lg py-2 mt-2 bg-slate-900 text-white pl-3 pr-4 w-[180px] text-lg "
@@ -194,14 +238,25 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                 <input
                   type="text"
                   name="price"
-                  required
                   disabled={active}
+                  value={
+                    active
+                      ? installmentValue.toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                        })
+                      : price
+                  }
+                  onChange={(e) => setPrice(e.target.value)}
                   inputMode="decimal"
-                  placeholder="00,00"
+                  placeholder="0,00"
                   className="appearance-none border border-zinc-300 rounded-lg 
-                  pl-9 pr-4 py-2 w-full
-                  placeholder:text-gray-400 text-lg font-bold
-                  focus:outline-none focus:ring-2 focus:ring-green-600 placeholder:text-lg bg-slate-900 text-white"
+pl-9 pr-4 py-2 w-full
+placeholder:text-gray-400
+disabled:placeholder:text-gray-400
+disabled:opacity-100
+text-lg font-bold
+focus:outline-none focus:ring-2 focus:ring-green-600
+bg-slate-900 text-white"
                 />
               </div>
             </div>

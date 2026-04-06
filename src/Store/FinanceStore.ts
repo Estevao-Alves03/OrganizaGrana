@@ -24,14 +24,35 @@ export interface Transaction {
   monthlyValues?: Record<string, number>;
 }
 
+export interface CreditTransaction {
+  id: string;
+  name: string;
+  totalAmount: number;
+  installments: number;
+  startMonth: string;
+  category: Category;
+}
+
 interface FinanceState {
   currentMonth: string;
   setCurrentMonth: (month: string) => void;
 
   transactions: Transaction[];
   notes: Note[];
+  creditTransactions: CreditTransaction[];
 
   addTransaction: (transaction: Transaction) => void;
+  addCreditTransaction: (credit: CreditTransaction) => void;
+
+  getCreditTransactionsByMonth: (month: string) => {
+    id: string;
+    name: string;
+    category: Category;
+    installments: number;
+    currentInstallment: number;
+    installmentValue: number;
+    totalAmount: number;
+  }[];
   removeTransaction: (id: string) => void;
   updateTransactionAmount: (id: string, amount: number) => void;
   updateTransactionAmountForMonth: (
@@ -54,6 +75,7 @@ interface FinanceState {
 
   getTransactionsByMonth: (month: string) => Transaction[];
   removeTransactionByMonth: (id: string, month: string) => void;
+  removeCreditTransaction: (id: string) => void
 
   getTotals: () => {
     totalIncome: number;
@@ -81,6 +103,62 @@ export const useFinanceStore = create<FinanceState>()(
 
       transactions: [],
       notes: [],
+      creditTransactions: [],
+
+      addCreditTransaction: (credit) =>
+        set((state) => ({
+          creditTransactions: [...state.creditTransactions, credit],
+        })),
+
+      getCreditTransactionsByMonth: (month: string) => {
+        const { creditTransactions } = get();
+
+        const [year, monthIndex] = month.split("-").map(Number);
+        const current = new Date(year, monthIndex - 1);
+
+        return creditTransactions
+          .filter((credit) => {
+            const [startYear, startMonth] = credit.startMonth
+              .split("-")
+              .map(Number);
+
+            const start = new Date(startYear, startMonth - 1);
+
+            const diffMonths =
+              (current.getFullYear() - start.getFullYear()) * 12 +
+              (current.getMonth() - start.getMonth());
+
+            return diffMonths >= 0 && diffMonths < credit.installments;
+          })
+          .map((credit) => {
+            const [startYear, startMonth] = credit.startMonth
+              .split("-")
+              .map(Number);
+
+            const start = new Date(startYear, startMonth - 1);
+
+            const diffMonths =
+              (current.getFullYear() - start.getFullYear()) * 12 +
+              (current.getMonth() - start.getMonth());
+
+            return {
+              id: credit.id,
+              name: credit.name,
+              category: credit.category,
+              installments: credit.installments,
+              currentInstallment: diffMonths + 1,
+              installmentValue: credit.totalAmount / credit.installments,
+              totalAmount: credit.totalAmount,
+            };
+          });
+      },
+
+      removeCreditTransaction: (id: string) =>
+        set((state) => ({
+          creditTransactions: state.creditTransactions.filter(
+            (c) => c.id !== id,
+          ),
+        })),
 
       addTransaction: (transaction) =>
         set((state) => ({
@@ -127,7 +205,7 @@ export const useFinanceStore = create<FinanceState>()(
 
       updateTransactionCategory: (id: string, newCategory: Category) =>
         set((state) => {
-          console.log("id recebido: ", id)
+          console.log("id recebido: ", id);
           console.log("ANTES", state.transactions);
 
           const updated = state.transactions.map((t) =>
@@ -319,6 +397,7 @@ export const useFinanceStore = create<FinanceState>()(
         transactions: state.transactions,
         notes: state.notes,
         currentMonth: state.currentMonth,
+        creditTransactions: state.creditTransactions,
       }),
     },
   ),
