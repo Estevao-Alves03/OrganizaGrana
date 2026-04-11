@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { Card } from "../../components/ui/card";
-import type { Transaction } from "../../Store/FinanceStore";
+import type { CreditTransaction, Transaction } from "../../Store/FinanceStore";
 import { useFinanceStore } from "../../Store/FinanceStore";
 import type { Category } from "../../Types/Category";
 import { showToast } from "../Warnings/ToastContainer";
@@ -25,6 +25,44 @@ interface CreditItem {
   currentInstallment: number;
   installmentValue: number;
   totalAmount: number;
+}
+
+// -----------------------------
+// FUNÇÃO PURA (fora do componente)
+// -----------------------------
+function getCreditTransactionsByMonth(
+  creditTransactions: CreditTransaction[],
+  month: string
+): CreditItem[] {
+  const [year, monthIndex] = month.split("-").map(Number);
+  const current = new Date(year, monthIndex - 1);
+
+  return creditTransactions
+    .map((credit) => {
+      const [startYear, startMonth] = credit.startMonth.split("-").map(Number);
+      const start = new Date(startYear, startMonth - 1);
+
+      const diffMonths =
+        (current.getFullYear() - start.getFullYear()) * 12 +
+        (current.getMonth() - start.getMonth());
+
+      if (diffMonths < 0 || diffMonths >= credit.installments) {
+        return null;
+      }
+
+      return {
+        id: credit.id,
+        name: credit.name,
+        category: credit.category,
+        installments: credit.installments,
+        currentInstallment: diffMonths + 1,
+        installmentValue: Number(
+          (credit.totalAmount / credit.installments).toFixed(2)
+        ),
+        totalAmount: credit.totalAmount,
+      };
+    })
+    .filter((item): item is CreditItem => item !== null);
 }
 
 function ConfirmDeletion({ onCloseWarning, onConfirm }: ConfirmDeletionProps) {
@@ -74,11 +112,25 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
     transactions,
   } = useFinanceStore();
 
-  const creditTransactions = useFinanceStore((s) => s.creditTransactions);
-  const currentMonth = useFinanceStore((s) => s.currentMonth);
+  // ✅ Zustand (estado puro)
+  const creditTransactions = useFinanceStore(
+    (state) => state.creditTransactions
+  );
+
+  const currentMonth = useFinanceStore(
+    (state) => state.currentMonth
+  );
+
+  // ✅ Derivado correto (SEM loop)
+  const creditExpenses = useMemo(() => {
+    return getCreditTransactionsByMonth(
+      creditTransactions,
+      currentMonth
+    );
+  }, [creditTransactions, currentMonth]);
 
   // -----------------------------
-  // STATES DE DELETE
+  // STATES
   // -----------------------------
   const [expenseToDelete, setExpenseToDelete] = useState<string | null>(null);
   const [deleteType, setDeleteType] = useState<
@@ -86,9 +138,6 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
   >(null);
   const [showWarning, setShowWarning] = useState(false);
 
-  // -----------------------------
-  // STATES QUE ESTAVAM FALTANDO (CORRIGIDO)
-  // -----------------------------
   const [editingName, setEditingName] = useState<string | null>(null);
   const [tempName, setTempName] = useState("");
 
@@ -99,38 +148,8 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
   const [tempAmount, setTempAmount] = useState<string>("");
 
   // -----------------------------
-  // CREDIT EXPENSES
+  // DERIVADOS
   // -----------------------------
-  const creditExpenses = useMemo(() => {
-    const [year, monthIndex] = currentMonth.split("-").map(Number);
-    const current = new Date(year, monthIndex - 1);
-
-    return creditTransactions
-      .map((credit) => {
-        const [startYear, startMonth] = credit.startMonth.split("-").map(Number);
-        const start = new Date(startYear, startMonth - 1);
-
-        const diffMonths =
-          (current.getFullYear() - start.getFullYear()) * 12 +
-          (current.getMonth() - start.getMonth());
-
-        if (diffMonths < 0 || diffMonths >= credit.installments) {
-          return null;
-        }
-
-        return {
-          id: credit.id,
-          name: credit.name,
-          category: credit.category,
-          installments: credit.installments,
-          currentInstallment: diffMonths + 1,
-          installmentValue: credit.totalAmount / credit.installments,
-          totalAmount: credit.totalAmount,
-        };
-      })
-      .filter((item): item is CreditItem => item !== null);
-  }, [currentMonth, creditTransactions]);
-
   const hiddenTransactions = transactions.filter(
     (t) => t.fixed && t.hiddenMonths?.includes(currentMonth)
   );
@@ -141,6 +160,9 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
     return (b.amount ?? 0) - (a.amount ?? 0);
   });
 
+  // -----------------------------
+  // HANDLERS
+  // -----------------------------
   const handleConfirmDelete = () => {
     if (!expenseToDelete) return;
 
@@ -173,6 +195,9 @@ export default function ExpensesList({ expenses }: ExpensesListProps) {
     toggleTransactionFixed(id);
   };
 
+  // -----------------------------
+  // RENDER
+  // -----------------------------
   return (
     <div className="w-full flex flex-col gap-3">
       {showWarning && expenseToDelete && (

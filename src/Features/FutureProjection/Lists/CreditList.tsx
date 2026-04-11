@@ -24,7 +24,7 @@ export default function CreditList() {
             >
               {/* LEFT */}
               <section className="flex items-center gap-3">
-                <span className="w-3 h-3 rounded-full bg-red-600" />
+                <span className="w-3 h-3 rounded-full bg-white" />
 
                 <div>
                   <CardTitle className="text-lg font-bold text-slate-300">

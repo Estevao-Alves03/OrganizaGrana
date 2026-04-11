@@ -51,7 +51,7 @@ export default function ExpenseCreditCard({ expenses, onDelete }: Props) {
                   R${" "}
                   {expense.installmentValue.toLocaleString("pt-BR", {
                     minimumFractionDigits: 2,
-                  })}
+                  }) ?? "0,00"}
                 </span>
 
                 <button 
@@ -81,9 +81,9 @@ export default function ExpenseCreditCard({ expenses, onDelete }: Props) {
             <div className="flex items-start mt-3">
               <h1 className="text-slate-400 font-medium">
                 Total da compra: R${" "}
-                {expense.totalAmount.toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                })}
+               {(expense.totalAmount ?? 0).toLocaleString("pt-BR", {
+                minimumFractionDigits: 2
+               })}
               </h1>
             </div>
           </Card>

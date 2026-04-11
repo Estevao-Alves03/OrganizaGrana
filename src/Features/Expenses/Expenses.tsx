@@ -21,9 +21,14 @@ export default function Expenses() {
 
   // pega todas transações do zustand
   const transactions = useFinanceStore((state) => state.transactions);
+  const creditTransactions = useFinanceStore(
+    (state) => state.creditTransactions
+  )
+  const expenses = transactions.filter((t) => t.type === "expense");
+
+  const hasAnyExpenses = expenses.length > 0 || creditTransactions.length > 0
 
   // filtra apenas despesas
-  const expenses = transactions.filter((t) => t.type === "expense");
 
   const openCard = () => {
     setShowCard(true);
@@ -59,7 +64,7 @@ export default function Expenses() {
         </CardHeader>
 
         <CardContent className="flex flex-col items-center justify-center mt-9 text-center px-4">
-          {expenses.length > 0 ? (
+          {hasAnyExpenses ? (
             <ExpensesList expenses={expenses} />
           ) : (
             <div>
@@ -83,7 +88,7 @@ export default function Expenses() {
         {showCard && <AddExpenses onCloseCard={closeCard} />}
       </Card>
 
-      {expenses.length > 0 && <GraphicsExpenses />}
+      {hasAnyExpenses && <GraphicsExpenses />}
     </div>
   );
 }

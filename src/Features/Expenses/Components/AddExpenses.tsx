@@ -187,8 +187,25 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                         name="totalPrice"
                         required
                         value={totalPrice}
-                        onChange={(e) => setTotalPrice(e.target.value)}
-                        inputMode="decimal"
+                        onChange={(e) => {
+                          let value = e.target.value
+
+                          value = value.replace(/[^0-9,]/g, "")
+
+                          const parts = value.split(",")
+                          if (parts.length > 2) {
+                            value = parts[0] + "," + parts[1]
+                          }
+
+                          if(parts[1]?.length > 2) {
+                            parts[1] = parts[1].slice(0, 2)
+                            value = parts.join(",")
+                          }
+
+                          setTotalPrice(value)
+                        }}
+                        inputMode="numeric"
+                        pattern="[0-9]*"
                         placeholder="0,00"
                         className="border rounded-lg py-2 mt-2 bg-slate-900 text-white pl-9 font-bold w-[280px] text-lg"
                       />
@@ -238,16 +255,18 @@ export default function AddExpenses({ onCloseCard }: AddExpensesProps) {
                 <input
                   type="text"
                   name="price"
+                  required
+                  inputMode="numeric"
+                  pattern="[0-9]*"
                   disabled={active}
                   value={
                     active
                       ? installmentValue.toLocaleString("pt-BR", {
-                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
                         })
                       : price
                   }
                   onChange={(e) => setPrice(e.target.value)}
-                  inputMode="decimal"
                   placeholder="0,00"
                   className="appearance-none border border-zinc-300 rounded-lg 
 pl-9 pr-4 py-2 w-full

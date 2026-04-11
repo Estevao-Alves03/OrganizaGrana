@@ -20,6 +20,7 @@ import {
   TabsTrigger,
 } from "../../components/ui/tabs";
 import { useFinanceStore } from "../../Store/FinanceStore";
+import { Category } from "../../Types/Category";
 import { categoryColors } from "../../Utils/categoryColors";
 
 export default function GraphicsExpenses() {
@@ -29,10 +30,22 @@ export default function GraphicsExpenses() {
   const totals = getTotals();
   const totalExpense = totals.totalExpense;
 
-  const expenses = transactions.filter((t) => t.type === "expense");
+  const creditTransactions = useFinanceStore(
+    (state) => state.creditTransactions
+  )
+
+  const creditExpenses = creditTransactions.map((credit) => ({
+    amount: credit.totalAmount / credit.installments,
+    category: "Crédito/Parcelado" as Category
+  }))
+
+  const allExpenses = [
+    ...transactions.filter((t) => t.type === "expense"),
+    ...creditExpenses
+  ]
 
   const chartData = Object.values(
-    expenses.reduce(
+    allExpenses.reduce(
       (acc, expense) => {
         if (!acc[expense.category]) {
           acc[expense.category] = {
@@ -69,7 +82,7 @@ export default function GraphicsExpenses() {
           </CardTitle>
           <CardDescription className="text-base font-sans font-medium text-gray-300">
             Total: R$ {totalExpense.toLocaleString("pt-BR")} em{" "}
-            {expenses.length} despesas
+            {allExpenses.length} despesas
           </CardDescription>
         </CardHeader>
         <CardContent>
